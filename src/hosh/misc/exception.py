@@ -19,13 +19,38 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
+"""Exceptions create in this package.
 
-from unittest import TestCase
-
-from hosh.misc.core import cells_id_fromblob
-from hosh.misc.exception import WrongEType
+They help writing complete tests."""
 
 
-class TestLdict(TestCase):
-    def test_cells_id_fromblob(self):
-        self.assertRaises(WrongEType, lambda: cells_id_fromblob(b"sdff", "t2323rt", 48, 18446744073709551557))
+class CellValueTooHigh(Exception):
+    pass
+
+
+class DanglingEtype(Exception):
+    pass
+
+
+class WrongContent(Exception):
+    pass
+
+
+class WrongVersion(Exception):
+    pass
+
+
+class WrongOperands(Exception):
+    pass
+
+
+class ElementTooHigh(Exception):
+    pass
+
+
+class WrongIdentifier(Exception):
+    pass
+
+
+class WrongEType(Exception):
+    pass

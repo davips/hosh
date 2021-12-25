@@ -7,10 +7,10 @@ omit =
     */examples/*
 
     # unused algebra part
-    src/garoupa/algebra/*
-    src/garoupa/__init__.py
-    src/garoupa/npmath.py
-    src/garoupa/misc/helper.py
+    src/hosh/algebra/*
+    src/hosh/__init__.py
+    src/hosh/npmath.py
+    src/hosh/misc/helper.py
     
     setup.py
     venv

@@ -17,9 +17,9 @@ echo "----------------- docs/black... -----------------------"
 read -p "press enter"
 rm docs -rf
 poetry run black -l120 src/ tests/
-poetry run pdoc --html --force garoupa -o docs
-mv docs/garoupa/* docs/
-rm docs/garoupa -rf
+poetry run pdoc --html --force hosh -o docs
+mv docs/hosh/* docs/
+rm docs/hosh -rf
 git add docs
 echo "----------------- docs/black done -----------------------"
 echo; echo

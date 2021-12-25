@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>garoupa API documentation</title>
-<meta name="description" content="GaROUPa solves the problem of determining the identity of multi-valued objects or sequences of events
+<title>hosh API documentation</title>
+<meta name="description" content="hosh solves the problem of determining the identity of multi-valued objects or sequences of events
 (and provide extra modules for group theory)" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -20,37 +20,37 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>garoupa</code></h1>
+<h1 class="title">Package <code>hosh</code></h1>
 </header>
 <section id="section-intro">
-<p>GaROUPa solves the problem of determining the identity of multi-valued objects or sequences of events
+<p>hosh solves the problem of determining the identity of multi-valued objects or sequences of events
 (and provide extra modules for group theory)</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#  Copyright (c) 2021. Davi Pereira dos Santos
-#  This file is part of the garoupa project.
+#  This file is part of the hosh project.
 #  Please respect the license - more about this in the section (*) below.
 #
-#  garoupa is free software: you can redistribute it and/or modify
+#  hosh is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  garoupa is distributed in the hope that it will be useful,
+#  hosh is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with garoupa.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+#  along with hosh.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 #
 #  (*) Removing authorship by any means, e.g. by distribution of derived
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and is unethical regarding the effort and
 #  time spent here.
-&#34;&#34;&#34;GaROUPa solves the problem of determining the identity of multi-valued objects or sequences of events
+&#34;&#34;&#34;hosh solves the problem of determining the identity of multi-valued objects or sequences of events
 (and provide extra modules for group theory)&#34;&#34;&#34;
 
 from .config import setup
@@ -112,19 +112,15 @@ def removal_elem(field, asbin=False):
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="garoupa.algebra" href="algebra/index.html">garoupa.algebra</a></code></dt>
-<dd>
-<div class="desc"><p>Abstract algebra groups …</p></div>
-</dd>
-<dt><code class="name"><a title="garoupa.config" href="config.html">garoupa.config</a></code></dt>
+<dt><code class="name"><a title="hosh.config" href="config.html">hosh.config</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="garoupa.groups" href="groups.html">garoupa.groups</a></code></dt>
+<dt><code class="name"><a title="hosh.groups" href="groups.html">hosh.groups</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="garoupa.misc" href="misc/index.html">garoupa.misc</a></code></dt>
+<dt><code class="name"><a title="hosh.misc" href="misc/index.html">hosh.misc</a></code></dt>
 <dd>
 <div class="desc"><p>Support modules are hidden here to avoid polluting the API</p></div>
 </dd>
@@ -133,16 +129,16 @@ def removal_elem(field, asbin=False):
 <section>
 <h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt id="garoupa.identity"><code class="name">var <span class="ident">identity</span></code></dt>
+<dt id="hosh.identity"><code class="name">var <span class="ident">identity</span></code></dt>
 <dd>
 <div class="desc"><p>Shortcut to the 40-digit identity Hosh object</p></div>
 </dd>
-<dt id="garoupa.ø"><code class="name">var <span class="ident">ø</span></code></dt>
+<dt id="hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
 <dd>
 <div class="desc"><p>UTF-8 shortcut to the 40-digit identity Hosh object (AltGr+O in most keyboards)</p>
 <p>Other options are also available: ø16, ø32, ø40, ø64</p></div>
 </dd>
-<dt id="garoupa.ħ"><code class="name">var <span class="ident">ħ</span></code></dt>
+<dt id="hosh.ħ"><code class="name">var <span class="ident">ħ</span></code></dt>
 <dd>
 <div class="desc"><p>UTF-8 shortcut to create 40-digit Hosh objects (AltGr+H in most keyboards)</p>
 <p>Other options are also available: ħ16, ħ32, ħ40, ħ64</p></div>
@@ -152,7 +148,7 @@ def removal_elem(field, asbin=False):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="garoupa.removal_elem"><code class="name flex">
+<dt id="hosh.removal_elem"><code class="name flex">
 <span>def <span class="ident">removal_elem</span></span>(<span>field, asbin=False)</span>
 </code></dt>
 <dd>
@@ -180,7 +176,7 @@ b'&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD myfield&gt;'
     return r if asbin else Hosh(r)</code></pre>
 </details>
 </dd>
-<dt id="garoupa.rho_elem"><code class="name flex">
+<dt id="hosh.rho_elem"><code class="name flex">
 <span>def <span class="ident">rho_elem</span></span>(<span>index, asbin=False)</span>
 </code></dt>
 <dd>
@@ -213,7 +209,7 @@ b'&lt;RESERVED ELEMENT: rho_2&gt;'
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="garoupa.Hosh"><code class="flex name class">
+<dt id="hosh.Hosh"><code class="flex name class">
 <span>class <span class="ident">Hosh</span></span>
 <span>(</span><span>content, etype='default:ordered', version=Group(p=1099511627689, p4=1461501636868331575725436266114840805196834679841, p6=1766847063939562670646036165286872353986524172769430561878277294118845361, digits=40, bytes=30, firstp='0_100000000_____________________________', lastp='f_8afffffff_____________________________', firstp4='00_1000000000000000000000000000000000000', lastp4='.._87c2a630003eec7dffff561b0000004aeffff', firstp6='1000000000000000000000000000000000000000', lastp6='g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....'))</span>
 </code></dt>
@@ -221,7 +217,7 @@ b'&lt;RESERVED ELEMENT: rho_2&gt;'
 <div class="desc"><p>Operable hash.</p>
 <p>Generate a Hosh object from a binary content or a list of 6 ints.</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; a = Hosh(b&quot;lots of data&quot;)
 &gt;&gt;&gt; b = Hosh(b&quot;lots of data 2&quot;)
 &gt;&gt;&gt; a.id
@@ -254,7 +250,7 @@ True
 True
 &gt;&gt;&gt; a * z == z * a
 True
-&gt;&gt;&gt; from garoupa import ø
+&gt;&gt;&gt; from hosh import ø
 &gt;&gt;&gt; print(ø)  # Handy syntax using ø for identity.
 0000000000000000000000000000000000000000
 &gt;&gt;&gt; print(ø * &quot;7ysdf98ys34hg543hdf98ysdf98ysdfysdf98ysd&quot;)  # str, bytes or int are converted as id, blob or element rank.
@@ -308,7 +304,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; a = Hosh(b&#34;lots of data&#34;)
     &gt;&gt;&gt; b = Hosh(b&#34;lots of data 2&#34;)
     &gt;&gt;&gt; a.id
@@ -341,7 +337,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     True
     &gt;&gt;&gt; a * z == z * a
     True
-    &gt;&gt;&gt; from garoupa import ø
+    &gt;&gt;&gt; from hosh import ø
     &gt;&gt;&gt; print(ø)  # Handy syntax using ø for identity.
     0000000000000000000000000000000000000000
     &gt;&gt;&gt; print(ø * &#34;7ysdf98ys34hg543hdf98ysdf98ysdfysdf98ysd&#34;)  # str, bytes or int are converted as id, blob or element rank.
@@ -413,7 +409,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         Usage:
 
-        &gt;&gt;&gt; from garoupa import Hosh
+        &gt;&gt;&gt; from hosh import Hosh
         &gt;&gt;&gt; (b := Hosh(b&#34;23987rg23&#34;)).id
         &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
         &gt;&gt;&gt; b.etype
@@ -428,7 +424,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#39;ordered&#39;
         &#34;&#34;&#34;
         if self._ø is None:
-            from garoupa import Identity
+            from hosh import Identity
 
             self._ø = Identity(version=self.version, etype_inducer=self.etype)
         return self._ø
@@ -440,7 +436,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         Usage:
 
-        &gt;&gt;&gt; from garoupa import Hosh
+        &gt;&gt;&gt; from hosh import Hosh
         &gt;&gt;&gt; Hosh.fromn(5).etype
         &#39;unordered&#39;
 
@@ -464,7 +460,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         Usage:
 
-        &gt;&gt;&gt; from garoupa import ø, Hosh
+        &gt;&gt;&gt; from hosh import ø, Hosh
         &gt;&gt;&gt; ø.etype_inducer
         &#39;ordered&#39;
         &gt;&gt;&gt; ø.h.etype_inducer
@@ -590,7 +586,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         Usage:
 
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; (ø * b&#39;65e987978g&#39;).sid
         &#39;ȟɟìӧДɫŖāöơɟբƢŊþXÊϱՎҲģţՀɄЌ&#39;
 
@@ -607,7 +603,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         r&#34;&#34;&#34;
         Colored textual (ANSI) representation of this element
 
-        &gt;&gt;&gt; from garoupa import Hosh
+        &gt;&gt;&gt; from hosh import Hosh
         &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).ansi
         &#39;\x1b[38;5;229m\x1b[1m\x1b[48;5;0mI\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mz\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0m3\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m7\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m2\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mB\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mQ\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mv\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m0\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mi\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mO\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mj\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ml\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0me\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mY\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mF\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mT\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mm\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m1\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mZ\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0md\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m&#39;
 
@@ -628,7 +624,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#34;&#34;&#34;
         Colored textual (RGB) representation of this element
 
-        &gt;&gt;&gt; from garoupa import Hosh
+        &gt;&gt;&gt; from hosh import Hosh
         &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).rgb
         [[6, 28, 104], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187]]
         &#34;&#34;&#34;
@@ -654,7 +650,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         Usage:
 
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sidc)
         \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
 
@@ -682,7 +678,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     def __rmul__(self, other: Union[&#34;Hosh&#34;, str, bytes, int]):
         &#34;&#34;&#34;
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34; )* b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; * (ø * b&#34;434vbfrdg&#34;)
         True
 
@@ -698,7 +694,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     def __rpow__(self, other):
         &#34;&#34;&#34;
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) ** b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; ** (ø * b&#34;434vbfrdg&#34;)
         True
 
@@ -717,7 +713,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     def __rfloordiv__(self, other):
         &#34;&#34;&#34;
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) // b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; // (ø * b&#34;434vbfrdg&#34;)
         True
 
@@ -779,7 +775,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     def __rtruediv__(self, other):
         &#34;&#34;&#34;
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) / b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; / (ø * b&#34;434vbfrdg&#34;)
         True
 
@@ -842,11 +838,11 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#34;&#34;&#34;
         Usage:
 
-        &gt;&gt;&gt; from garoupa import ø
+        &gt;&gt;&gt; from hosh import ø
         &gt;&gt;&gt; ø.convert([0,0,0,0,0,0]).id
         &#39;0000000000000000000000000000000000000000&#39;
 
-        &gt;&gt;&gt; from garoupa import Hosh
+        &gt;&gt;&gt; from hosh import Hosh
         &gt;&gt;&gt; ø.convert(0).id
         &#39;0000000000000000000000000000000000000000&#39;
 
@@ -876,18 +872,18 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="garoupa.misc.identity.Identity" href="misc/identity.html#garoupa.misc.identity.Identity">Identity</a></li>
+<li><a title="hosh.misc.identity.Identity" href="misc/identity.html#hosh.misc.identity.Identity">Identity</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="garoupa.Hosh.shorter"><code class="name">var <span class="ident">shorter</span></code></dt>
+<dt id="hosh.Hosh.shorter"><code class="name">var <span class="ident">shorter</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Static methods</h3>
 <dl>
-<dt id="garoupa.Hosh.fromid"><code class="name flex">
+<dt id="hosh.Hosh.fromid"><code class="name flex">
 <span>def <span class="ident">fromid</span></span>(<span>id)</span>
 </code></dt>
 <dd>
@@ -927,7 +923,7 @@ True
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>A new <a title="garoupa.Hosh" href="#garoupa.Hosh">Hosh</a> object</code></dt>
+<dt><code>A new <a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a> object</code></dt>
 <dd>&nbsp;</dd>
 </dl></div>
 <details class="source">
@@ -981,7 +977,7 @@ def fromid(cls, id):
     return Hosh(cells_fromid(id, p=groups[len(id)].p), version=groups[len(id)])</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.fromn"><code class="name flex">
+<dt id="hosh.Hosh.fromn"><code class="name flex">
 <span>def <span class="ident">fromn</span></span>(<span>n: int, version=Group(p=1099511627689, p4=1461501636868331575725436266114840805196834679841, p6=1766847063939562670646036165286872353986524172769430561878277294118845361, digits=40, bytes=30, firstp='0_100000000_____________________________', lastp='f_8afffffff_____________________________', firstp4='00_1000000000000000000000000000000000000', lastp4='.._87c2a630003eec7dffff561b0000004aeffff', firstp6='1000000000000000000000000000000000000000', lastp6='g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....'))</span>
 </code></dt>
 <dd>
@@ -1001,7 +997,7 @@ def fromid(cls, id):
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>A new <a title="garoupa.Hosh" href="#garoupa.Hosh">Hosh</a> object</code></dt>
+<dt><code>A new <a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a> object</code></dt>
 <dd>&nbsp;</dd>
 </dl></div>
 <details class="source">
@@ -1039,10 +1035,10 @@ def fromn(cls, n: int, version=UT40_4):
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="garoupa.Hosh.ansi"><code class="name">var <span class="ident">ansi</span></code></dt>
+<dt id="hosh.Hosh.ansi"><code class="name">var <span class="ident">ansi</span></code></dt>
 <dd>
 <div class="desc"><p>Colored textual (ANSI) representation of this element</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; Hosh.fromid(&quot;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&quot;).ansi
 '\x1b[38;5;229m\x1b[1m\x1b[48;5;0mI\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mz\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0m3\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m7\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m2\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mB\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mQ\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mv\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m0\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mi\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mO\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mj\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ml\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0me\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mY\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mF\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mT\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mm\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m1\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mZ\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0md\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m'
 </code></pre>
@@ -1060,7 +1056,7 @@ def ansi(self):
     r&#34;&#34;&#34;
     Colored textual (ANSI) representation of this element
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).ansi
     &#39;\x1b[38;5;229m\x1b[1m\x1b[48;5;0mI\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mz\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0m3\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m7\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m2\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mB\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mQ\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mv\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m0\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mi\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mO\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mj\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ml\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0me\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mY\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mF\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mT\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mm\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m1\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mZ\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0md\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m&#39;
 
@@ -1073,11 +1069,11 @@ def ansi(self):
     return self._ansi</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.etype"><code class="name">var <span class="ident">etype</span></code></dt>
+<dt id="hosh.Hosh.etype"><code class="name">var <span class="ident">etype</span></code></dt>
 <dd>
 <div class="desc"><p>Type of this element</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; Hosh.fromn(5).etype
 'unordered'
 </code></pre>
@@ -1094,7 +1090,7 @@ def etype(self):
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; Hosh.fromn(5).etype
     &#39;unordered&#39;
 
@@ -1112,11 +1108,11 @@ def etype(self):
     return self._etype</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.etype_inducer"><code class="name">var <span class="ident">etype_inducer</span></code></dt>
+<dt id="hosh.Hosh.etype_inducer"><code class="name">var <span class="ident">etype_inducer</span></code></dt>
 <dd>
 <div class="desc"><p>Type this element uses to coerce an element of undefined type.</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import ø, Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø, Hosh
 &gt;&gt;&gt; ø.etype_inducer
 'ordered'
 &gt;&gt;&gt; ø.h.etype_inducer
@@ -1141,7 +1137,7 @@ def etype_inducer(self):
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import ø, Hosh
+    &gt;&gt;&gt; from hosh import ø, Hosh
     &gt;&gt;&gt; ø.etype_inducer
     &#39;ordered&#39;
     &gt;&gt;&gt; ø.h.etype_inducer
@@ -1162,7 +1158,7 @@ def etype_inducer(self):
     return self._etype_inducer</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.html"><code class="name">var <span class="ident">html</span></code></dt>
+<dt id="hosh.Hosh.html"><code class="name">var <span class="ident">html</span></code></dt>
 <dd>
 <div class="desc"><p>HTML page containing a colored textual representation of this element</p>
 <h2 id="returns">Returns</h2>
@@ -1186,7 +1182,7 @@ def html(self):
     return ansi2html(self.ansi)</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dt id="hosh.Hosh.id"><code class="name">var <span class="ident">id</span></code></dt>
 <dd>
 <div class="desc"><p>Textual representation of this element</p>
 <h2 id="returns">Returns</h2>
@@ -1212,7 +1208,7 @@ def id(self):
     return self._id</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.idc"><code class="name">var <span class="ident">idc</span></code></dt>
+<dt id="hosh.Hosh.idc"><code class="name">var <span class="ident">idc</span></code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
@@ -1224,7 +1220,7 @@ def idc(self):
     return self.ansi</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.n"><code class="name">var <span class="ident">n</span></code></dt>
+<dt id="hosh.Hosh.n"><code class="name">var <span class="ident">n</span></code></dt>
 <dd>
 <div class="desc"><p>Lexicographic rank of this eloement (according to the format adopted in internal integer cells.</p>
 <h2 id="returns">Returns</h2>
@@ -1250,10 +1246,10 @@ def n(self):
     return self._n</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.rgb"><code class="name">var <span class="ident">rgb</span></code></dt>
+<dt id="hosh.Hosh.rgb"><code class="name">var <span class="ident">rgb</span></code></dt>
 <dd>
 <div class="desc"><p>Colored textual (RGB) representation of this element</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; Hosh.fromid(&quot;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&quot;).rgb
 [[6, 28, 104], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187]]
 </code></pre></div>
@@ -1266,7 +1262,7 @@ def rgb(self):
     &#34;&#34;&#34;
     Colored textual (RGB) representation of this element
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).rgb
     [[6, 28, 104], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187]]
     &#34;&#34;&#34;
@@ -1275,11 +1271,11 @@ def rgb(self):
     return self._rgb</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.sid"><code class="name">var <span class="ident">sid</span></code></dt>
+<dt id="hosh.Hosh.sid"><code class="name">var <span class="ident">sid</span></code></dt>
 <dd>
 <div class="desc"><p>Shorter id (base-922 using up to 2 bytes utf8 per char)</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import ø
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
 &gt;&gt;&gt; (ø * b'65e987978g').sid
 'ȟɟìӧДɫŖāöơɟբƢŊþXÊϱՎҲģţՀɄЌ'
 </code></pre>
@@ -1299,7 +1295,7 @@ def sid(self):
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import ø
+    &gt;&gt;&gt; from hosh import ø
     &gt;&gt;&gt; (ø * b&#39;65e987978g&#39;).sid
     &#39;ȟɟìӧДɫŖāöơɟբƢŊþXÊϱՎҲģţՀɄЌ&#39;
 
@@ -1312,11 +1308,11 @@ def sid(self):
     return self._sid</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.sidc"><code class="name">var <span class="ident">sidc</span></code></dt>
+<dt id="hosh.Hosh.sidc"><code class="name">var <span class="ident">sidc</span></code></dt>
 <dd>
 <div class="desc"><p>Shorter colored id (base-922 using up to 2 bytes utf8 per char)</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import ø
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
 &gt;&gt;&gt; print((ø * b'65e987978g').sidc)
 [38;5;156m[1m[48;5;0mȟ[0m[38;5;155m[1m[48;5;0mɟ[0m[38;5;185m[1m[48;5;0mì[0m[38;5;113m[1m[48;5;0mӧ[0m[38;5;119m[1m[48;5;0mД[0m[38;5;185m[1m[48;5;0mɫ[0m[38;5;113m[1m[48;5;0mŖ[0m[38;5;119m[1m[48;5;0mā[0m[38;5;149m[1m[48;5;0mö[0m[38;5;113m[1m[48;5;0mơ[0m[38;5;83m[1m[48;5;0mɟ[0m[38;5;155m[1m[48;5;0mբ[0m[38;5;149m[1m[48;5;0mƢ[0m[38;5;119m[1m[48;5;0mŊ[0m[38;5;185m[1m[48;5;0mþ[0m[38;5;119m[1m[48;5;0mX[0m[38;5;156m[1m[48;5;0mÊ[0m[38;5;155m[1m[48;5;0mϱ[0m[38;5;185m[1m[48;5;0mՎ[0m[38;5;113m[1m[48;5;0mҲ[0m[38;5;119m[1m[48;5;0mģ[0m[38;5;185m[1m[48;5;0mţ[0m[38;5;113m[1m[48;5;0mՀ[0m[38;5;119m[1m[48;5;0mɄ[0m[38;5;149m[1m[48;5;0mЌ[0m
 </code></pre>
@@ -1336,7 +1332,7 @@ def sidc(self):
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import ø
+    &gt;&gt;&gt; from hosh import ø
     &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sidc)
     \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
 
@@ -1349,11 +1345,11 @@ def sidc(self):
     return self._sidc</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
+<dt id="hosh.Hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
 <dd>
 <div class="desc"><p>Identity element compatible with this Hosh object</p>
 <p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; (b := Hosh(b&quot;23987rg23&quot;)).id
 'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
 &gt;&gt;&gt; b.etype
@@ -1377,7 +1373,7 @@ def ø(self):
 
     Usage:
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; (b := Hosh(b&#34;23987rg23&#34;)).id
     &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
     &gt;&gt;&gt; b.etype
@@ -1392,7 +1388,7 @@ def ø(self):
     &#39;ordered&#39;
     &#34;&#34;&#34;
     if self._ø is None:
-        from garoupa import Identity
+        from hosh import Identity
 
         self._ø = Identity(version=self.version, etype_inducer=self.etype)
     return self._ø</code></pre>
@@ -1401,16 +1397,16 @@ def ø(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="garoupa.Hosh.convert"><code class="name flex">
+<dt id="hosh.Hosh.convert"><code class="name flex">
 <span>def <span class="ident">convert</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import ø
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
 &gt;&gt;&gt; ø.convert([0,0,0,0,0,0]).id
 '0000000000000000000000000000000000000000'
 </code></pre>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from garoupa import Hosh
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
 &gt;&gt;&gt; ø.convert(0).id
 '0000000000000000000000000000000000000000'
 </code></pre>
@@ -1428,11 +1424,11 @@ def ø(self):
     &#34;&#34;&#34;
     Usage:
 
-    &gt;&gt;&gt; from garoupa import ø
+    &gt;&gt;&gt; from hosh import ø
     &gt;&gt;&gt; ø.convert([0,0,0,0,0,0]).id
     &#39;0000000000000000000000000000000000000000&#39;
 
-    &gt;&gt;&gt; from garoupa import Hosh
+    &gt;&gt;&gt; from hosh import Hosh
     &gt;&gt;&gt; ø.convert(0).id
     &#39;0000000000000000000000000000000000000000&#39;
 
@@ -1461,7 +1457,7 @@ def ø(self):
     return other</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.short"><code class="name flex">
+<dt id="hosh.Hosh.short"><code class="name flex">
 <span>def <span class="ident">short</span></span>(<span>self, colored=True)</span>
 </code></dt>
 <dd>
@@ -1483,7 +1479,7 @@ lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
     return print(self.sidc if colored else self.sid)</code></pre>
 </details>
 </dd>
-<dt id="garoupa.Hosh.show"><code class="name flex">
+<dt id="hosh.Hosh.show"><code class="name flex">
 <span>def <span class="ident">show</span></span>(<span>self, colored=True)</span>
 </code></dt>
 <dd>
@@ -1518,47 +1514,46 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="garoupa.algebra" href="algebra/index.html">garoupa.algebra</a></code></li>
-<li><code><a title="garoupa.config" href="config.html">garoupa.config</a></code></li>
-<li><code><a title="garoupa.groups" href="groups.html">garoupa.groups</a></code></li>
-<li><code><a title="garoupa.misc" href="misc/index.html">garoupa.misc</a></code></li>
+<li><code><a title="hosh.config" href="config.html">hosh.config</a></code></li>
+<li><code><a title="hosh.groups" href="groups.html">hosh.groups</a></code></li>
+<li><code><a title="hosh.misc" href="misc/index.html">hosh.misc</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-variables">Global variables</a></h3>
 <ul class="">
-<li><code><a title="garoupa.identity" href="#garoupa.identity">identity</a></code></li>
-<li><code><a title="garoupa.ø" href="#garoupa.ø">ø</a></code></li>
-<li><code><a title="garoupa.ħ" href="#garoupa.ħ">ħ</a></code></li>
+<li><code><a title="hosh.identity" href="#hosh.identity">identity</a></code></li>
+<li><code><a title="hosh.ø" href="#hosh.ø">ø</a></code></li>
+<li><code><a title="hosh.ħ" href="#hosh.ħ">ħ</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="garoupa.removal_elem" href="#garoupa.removal_elem">removal_elem</a></code></li>
-<li><code><a title="garoupa.rho_elem" href="#garoupa.rho_elem">rho_elem</a></code></li>
+<li><code><a title="hosh.removal_elem" href="#hosh.removal_elem">removal_elem</a></code></li>
+<li><code><a title="hosh.rho_elem" href="#hosh.rho_elem">rho_elem</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="garoupa.Hosh" href="#garoupa.Hosh">Hosh</a></code></h4>
+<h4><code><a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a></code></h4>
 <ul class="two-column">
-<li><code><a title="garoupa.Hosh.ansi" href="#garoupa.Hosh.ansi">ansi</a></code></li>
-<li><code><a title="garoupa.Hosh.convert" href="#garoupa.Hosh.convert">convert</a></code></li>
-<li><code><a title="garoupa.Hosh.etype" href="#garoupa.Hosh.etype">etype</a></code></li>
-<li><code><a title="garoupa.Hosh.etype_inducer" href="#garoupa.Hosh.etype_inducer">etype_inducer</a></code></li>
-<li><code><a title="garoupa.Hosh.fromid" href="#garoupa.Hosh.fromid">fromid</a></code></li>
-<li><code><a title="garoupa.Hosh.fromn" href="#garoupa.Hosh.fromn">fromn</a></code></li>
-<li><code><a title="garoupa.Hosh.html" href="#garoupa.Hosh.html">html</a></code></li>
-<li><code><a title="garoupa.Hosh.id" href="#garoupa.Hosh.id">id</a></code></li>
-<li><code><a title="garoupa.Hosh.idc" href="#garoupa.Hosh.idc">idc</a></code></li>
-<li><code><a title="garoupa.Hosh.n" href="#garoupa.Hosh.n">n</a></code></li>
-<li><code><a title="garoupa.Hosh.rgb" href="#garoupa.Hosh.rgb">rgb</a></code></li>
-<li><code><a title="garoupa.Hosh.short" href="#garoupa.Hosh.short">short</a></code></li>
-<li><code><a title="garoupa.Hosh.shorter" href="#garoupa.Hosh.shorter">shorter</a></code></li>
-<li><code><a title="garoupa.Hosh.show" href="#garoupa.Hosh.show">show</a></code></li>
-<li><code><a title="garoupa.Hosh.sid" href="#garoupa.Hosh.sid">sid</a></code></li>
-<li><code><a title="garoupa.Hosh.sidc" href="#garoupa.Hosh.sidc">sidc</a></code></li>
-<li><code><a title="garoupa.Hosh.ø" href="#garoupa.Hosh.ø">ø</a></code></li>
+<li><code><a title="hosh.Hosh.ansi" href="#hosh.Hosh.ansi">ansi</a></code></li>
+<li><code><a title="hosh.Hosh.convert" href="#hosh.Hosh.convert">convert</a></code></li>
+<li><code><a title="hosh.Hosh.etype" href="#hosh.Hosh.etype">etype</a></code></li>
+<li><code><a title="hosh.Hosh.etype_inducer" href="#hosh.Hosh.etype_inducer">etype_inducer</a></code></li>
+<li><code><a title="hosh.Hosh.fromid" href="#hosh.Hosh.fromid">fromid</a></code></li>
+<li><code><a title="hosh.Hosh.fromn" href="#hosh.Hosh.fromn">fromn</a></code></li>
+<li><code><a title="hosh.Hosh.html" href="#hosh.Hosh.html">html</a></code></li>
+<li><code><a title="hosh.Hosh.id" href="#hosh.Hosh.id">id</a></code></li>
+<li><code><a title="hosh.Hosh.idc" href="#hosh.Hosh.idc">idc</a></code></li>
+<li><code><a title="hosh.Hosh.n" href="#hosh.Hosh.n">n</a></code></li>
+<li><code><a title="hosh.Hosh.rgb" href="#hosh.Hosh.rgb">rgb</a></code></li>
+<li><code><a title="hosh.Hosh.short" href="#hosh.Hosh.short">short</a></code></li>
+<li><code><a title="hosh.Hosh.shorter" href="#hosh.Hosh.shorter">shorter</a></code></li>
+<li><code><a title="hosh.Hosh.show" href="#hosh.Hosh.show">show</a></code></li>
+<li><code><a title="hosh.Hosh.sid" href="#hosh.Hosh.sid">sid</a></code></li>
+<li><code><a title="hosh.Hosh.sidc" href="#hosh.Hosh.sidc">sidc</a></code></li>
+<li><code><a title="hosh.Hosh.ø" href="#hosh.Hosh.ø">ø</a></code></li>
 </ul>
 </li>
 </ul>

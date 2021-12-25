@@ -2,7 +2,7 @@
 Example of identifiers from diferent subgroups in G.
 """
 
-from garoupa import Hosh
+from hosh import Hosh
 
 z = 2 ** 32
 h = z * 2 ** 96

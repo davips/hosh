@@ -19,13 +19,4 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
-
-from unittest import TestCase
-
-from hosh.misc.core import cells_id_fromblob
-from hosh.misc.exception import WrongEType
-
-
-class TestLdict(TestCase):
-    def test_cells_id_fromblob(self):
-        self.assertRaises(WrongEType, lambda: cells_id_fromblob(b"sdff", "t2323rt", 48, 18446744073709551557))
+"""Support modules are hidden here to avoid polluting the API"""

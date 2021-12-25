@@ -17,15 +17,12 @@
 #
 #  (*) Removing authorship by any means, e.g. by distribution of derived
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
-#  part of this work is illegal and unethical regarding the effort and
+#  part of this work is illegal and is unethical regarding the effort and
 #  time spent here.
 
-from unittest import TestCase
-
-from hosh.misc.core import cells_id_fromblob
-from hosh.misc.exception import WrongEType
+GLOBAL = {}
+GLOBAL["dark_theme"] = True
 
 
-class TestLdict(TestCase):
-    def test_cells_id_fromblob(self):
-        self.assertRaises(WrongEType, lambda: cells_id_fromblob(b"sdff", "t2323rt", 48, 18446744073709551557))
+def setup(dark_theme):
+    GLOBAL["dark_theme"] = dark_theme

@@ -1,19 +1,19 @@
 #  Copyright (c) 2021. Davi Pereira dos Santos
-#  This file is part of the garoupa project.
+#  This file is part of the hosh project.
 #  Please respect the license - more about this in the section (*) below.
 #
-#  garoupa is free software: you can redistribute it and/or modify
+#  hosh is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  garoupa is distributed in the hope that it will be useful,
+#  hosh is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with garoupa.  If not, see <http://www.gnu.org/licenses/>.
+#  along with hosh.  If not, see <http://www.gnu.org/licenses/>.
 #
 #  (*) Removing authorship by any means, e.g. by distribution of derived
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
@@ -24,9 +24,9 @@ from unittest import TestCase
 
 import pytest
 
-from garoupa import ø
-from garoupa.groups import UT64_4, UT40_4
-from garoupa.hosh import (
+from hosh import ø
+from hosh.groups import UT64_4, UT40_4
+from hosh.hosh import (
     DanglingEtype,
     CellValueTooHigh,
     Hosh,
@@ -36,7 +36,7 @@ from garoupa.hosh import (
     ElementTooHigh,
     WrongIdentifier,
 )
-from garoupa.misc.identity import Identity
+from hosh.misc.identity import Identity
 
 
 class TestLdict(TestCase):
