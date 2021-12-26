@@ -22,7 +22,7 @@
 """Just shortcuts"""
 from dataclasses import dataclass
 
-from hosh.hosh import Hosh
+from hosh.hosh_ import Hosh
 
 
 @dataclass

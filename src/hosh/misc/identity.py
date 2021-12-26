@@ -22,7 +22,7 @@
 
 """Some shortcuts to the null operand and to ease creating elements"""
 from hosh.groups import UT40_4
-from hosh.hosh import Hosh
+from hosh.hosh_ import Hosh
 
 
 class Identity(Hosh):

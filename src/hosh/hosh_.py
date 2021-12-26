@@ -35,7 +35,7 @@ from hosh.misc.exception import (
     ElementTooHigh,
     WrongVersion,
 )
-from hosh.misc.math import int2cells, cells2int, cellsmul, cellsinv
+from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells
 
 
 class Hosh:
@@ -611,3 +611,21 @@ class Hosh:
         if self.version != other.version:
             raise WrongVersion(f"Incompatible operands: {self.version} != {other.version}")
         return other
+
+    def decompose(self, n):
+        """
+        Find 'n' additive components for 'x' such that 'x = c1+c2+...+cn'
+
+        >>> from functools import reduce
+        >>> import operator
+        >>> reduce(operator.add, Hosh(b"x").decompose(5)) == Hosh(b"x")
+        True
+        """
+
+        def fac(x):
+            d = sum(i for i in range(1, n + 1))
+            lst = [i * (x + self.p) // d for i in range(1, n + 1)]
+            lst[-1] += x - sum(lst)
+            return [l % self.p for l in lst]
+
+        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))

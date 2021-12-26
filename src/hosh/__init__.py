@@ -24,7 +24,7 @@
 
 from .config import setup
 from .groups import *
-from .hosh import Hosh as H
+from .hosh_ import Hosh as H
 from .misc.helper import Helper
 from .misc.identity import ø, Identity
 

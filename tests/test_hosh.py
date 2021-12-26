@@ -26,7 +26,7 @@ import pytest
 
 from hosh import ø
 from hosh.groups import UT64_4, UT40_4
-from hosh.hosh import (
+from hosh.hosh_ import (
     DanglingEtype,
     CellValueTooHigh,
     Hosh,
