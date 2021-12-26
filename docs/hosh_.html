@@ -642,21 +642,71 @@ class Hosh:
 
     def decompose(self, n):
         &#34;&#34;&#34;
-        Find &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+        Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+
+        Remaining values are adjusted in &#39;cn&#39;.
 
         &gt;&gt;&gt; from functools import reduce
         &gt;&gt;&gt; import operator
         &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
         True
         &#34;&#34;&#34;
+        den = n * (n + 1) // 2
+        p = self.p
 
         def fac(x):
-            d = sum(i for i in range(1, n + 1))
-            lst = [i * (x + self.p) // d for i in range(1, n + 1)]
-            lst[-1] += x - sum(lst)
-            return [l % self.p for l in lst]
+            parc, rem = divmod(x + p, den)
+            lst = [i * parc for i in range(1, n + 1)]
+            lst[-1] += rem
+            return [l % p for l in lst]
 
-        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
+        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))
+
+    def component(self, i, n):
+        &#34;&#34;&#34;
+        Return the &#39;i&#39;-th component of the additive decomposition of current hosh
+
+        Remaining values are adjusted in the last component.
+
+        &gt;&gt;&gt; from functools import reduce
+        &gt;&gt;&gt; import operator
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[0] == Hosh(b&#34;x&#34;).component(0, 2)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[1] == Hosh(b&#34;x&#34;).component(1, 2)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[0] == Hosh(b&#34;x&#34;).component(0, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[1] == Hosh(b&#34;x&#34;).component(1, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[2] == Hosh(b&#34;x&#34;).component(2, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[0] == Hosh(b&#34;x&#34;).component(0, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[1] == Hosh(b&#34;x&#34;).component(1, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[2] == Hosh(b&#34;x&#34;).component(2, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[4] == Hosh(b&#34;x&#34;).component(4, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[0] == Hosh(b&#34;x&#34;).component(0, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[1] == Hosh(b&#34;x&#34;).component(1, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[2] == Hosh(b&#34;x&#34;).component(2, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[4] == Hosh(b&#34;x&#34;).component(4, 7)
+        True
+        &#34;&#34;&#34;
+        den = n * (n + 1) // 2
+        p = self.p
+        i += 1
+        toggle = 1 if i == n else 0
+
+        def fac(x):
+            parc, rem = divmod(x + p, den)
+            return (i * parc + toggle * rem) % p
+
+        return Hosh(list(fac(c) for c in self.cells))</code></pre>
 </details>
 </section>
 <section>
@@ -1331,21 +1381,71 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
     def decompose(self, n):
         &#34;&#34;&#34;
-        Find &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+        Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+
+        Remaining values are adjusted in &#39;cn&#39;.
 
         &gt;&gt;&gt; from functools import reduce
         &gt;&gt;&gt; import operator
         &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
         True
         &#34;&#34;&#34;
+        den = n * (n + 1) // 2
+        p = self.p
 
         def fac(x):
-            d = sum(i for i in range(1, n + 1))
-            lst = [i * (x + self.p) // d for i in range(1, n + 1)]
-            lst[-1] += x - sum(lst)
-            return [l % self.p for l in lst]
+            parc, rem = divmod(x + p, den)
+            lst = [i * parc for i in range(1, n + 1)]
+            lst[-1] += rem
+            return [l % p for l in lst]
 
-        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
+        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))
+
+    def component(self, i, n):
+        &#34;&#34;&#34;
+        Return the &#39;i&#39;-th component of the additive decomposition of current hosh
+
+        Remaining values are adjusted in the last component.
+
+        &gt;&gt;&gt; from functools import reduce
+        &gt;&gt;&gt; import operator
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[0] == Hosh(b&#34;x&#34;).component(0, 2)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[1] == Hosh(b&#34;x&#34;).component(1, 2)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[0] == Hosh(b&#34;x&#34;).component(0, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[1] == Hosh(b&#34;x&#34;).component(1, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[2] == Hosh(b&#34;x&#34;).component(2, 3)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[0] == Hosh(b&#34;x&#34;).component(0, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[1] == Hosh(b&#34;x&#34;).component(1, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[2] == Hosh(b&#34;x&#34;).component(2, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[4] == Hosh(b&#34;x&#34;).component(4, 5)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[0] == Hosh(b&#34;x&#34;).component(0, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[1] == Hosh(b&#34;x&#34;).component(1, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[2] == Hosh(b&#34;x&#34;).component(2, 7)
+        True
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[4] == Hosh(b&#34;x&#34;).component(4, 7)
+        True
+        &#34;&#34;&#34;
+        den = n * (n + 1) // 2
+        p = self.p
+        i += 1
+        toggle = 1 if i == n else 0
+
+        def fac(x):
+            parc, rem = divmod(x + p, den)
+            return (i * parc + toggle * rem) % p
+
+        return Hosh(list(fac(c) for c in self.cells))</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -1874,6 +1974,92 @@ def ø(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="hosh.hosh_.Hosh.component"><code class="name flex">
+<span>def <span class="ident">component</span></span>(<span>self, i, n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the 'i'-th component of the additive decomposition of current hosh</p>
+<p>Remaining values are adjusted in the last component.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from functools import reduce
+&gt;&gt;&gt; import operator
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(2))[0] == Hosh(b&quot;x&quot;).component(0, 2)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(2))[1] == Hosh(b&quot;x&quot;).component(1, 2)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[0] == Hosh(b&quot;x&quot;).component(0, 3)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[1] == Hosh(b&quot;x&quot;).component(1, 3)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[2] == Hosh(b&quot;x&quot;).component(2, 3)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[0] == Hosh(b&quot;x&quot;).component(0, 5)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[1] == Hosh(b&quot;x&quot;).component(1, 5)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[2] == Hosh(b&quot;x&quot;).component(2, 5)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[4] == Hosh(b&quot;x&quot;).component(4, 5)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[0] == Hosh(b&quot;x&quot;).component(0, 7)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[1] == Hosh(b&quot;x&quot;).component(1, 7)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[2] == Hosh(b&quot;x&quot;).component(2, 7)
+True
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[4] == Hosh(b&quot;x&quot;).component(4, 7)
+True
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def component(self, i, n):
+    &#34;&#34;&#34;
+    Return the &#39;i&#39;-th component of the additive decomposition of current hosh
+
+    Remaining values are adjusted in the last component.
+
+    &gt;&gt;&gt; from functools import reduce
+    &gt;&gt;&gt; import operator
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[0] == Hosh(b&#34;x&#34;).component(0, 2)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[1] == Hosh(b&#34;x&#34;).component(1, 2)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[0] == Hosh(b&#34;x&#34;).component(0, 3)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[1] == Hosh(b&#34;x&#34;).component(1, 3)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[2] == Hosh(b&#34;x&#34;).component(2, 3)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[0] == Hosh(b&#34;x&#34;).component(0, 5)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[1] == Hosh(b&#34;x&#34;).component(1, 5)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[2] == Hosh(b&#34;x&#34;).component(2, 5)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[4] == Hosh(b&#34;x&#34;).component(4, 5)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[0] == Hosh(b&#34;x&#34;).component(0, 7)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[1] == Hosh(b&#34;x&#34;).component(1, 7)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[2] == Hosh(b&#34;x&#34;).component(2, 7)
+    True
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[4] == Hosh(b&#34;x&#34;).component(4, 7)
+    True
+    &#34;&#34;&#34;
+    den = n * (n + 1) // 2
+    p = self.p
+    i += 1
+    toggle = 1 if i == n else 0
+
+    def fac(x):
+        parc, rem = divmod(x + p, den)
+        return (i * parc + toggle * rem) % p
+
+    return Hosh(list(fac(c) for c in self.cells))</code></pre>
+</details>
+</dd>
 <dt id="hosh.hosh_.Hosh.convert"><code class="name flex">
 <span>def <span class="ident">convert</span></span>(<span>self, other)</span>
 </code></dt>
@@ -1938,7 +2124,8 @@ def ø(self):
 <span>def <span class="ident">decompose</span></span>(<span>self, n)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Find 'n' additive components for 'x' such that 'x = c1+c2+&hellip;+cn'</p>
+<div class="desc"><p>Return the 'n' additive components for 'x' such that 'x = c1+c2+&hellip;+cn'</p>
+<p>Remaining values are adjusted in 'cn'.</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; from functools import reduce
 &gt;&gt;&gt; import operator
 &gt;&gt;&gt; reduce(operator.add, Hosh(b&quot;x&quot;).decompose(5)) == Hosh(b&quot;x&quot;)
@@ -1950,19 +2137,23 @@ True
 </summary>
 <pre><code class="python">def decompose(self, n):
     &#34;&#34;&#34;
-    Find &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+    Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+
+    Remaining values are adjusted in &#39;cn&#39;.
 
     &gt;&gt;&gt; from functools import reduce
     &gt;&gt;&gt; import operator
     &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
     True
     &#34;&#34;&#34;
+    den = n * (n + 1) // 2
+    p = self.p
 
     def fac(x):
-        d = sum(i for i in range(1, n + 1))
-        lst = [i * (x + self.p) // d for i in range(1, n + 1)]
-        lst[-1] += x - sum(lst)
-        return [l % self.p for l in lst]
+        parc, rem = divmod(x + p, den)
+        lst = [i * parc for i in range(1, n + 1)]
+        lst[-1] += rem
+        return [l % p for l in lst]
 
     return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
 </details>
@@ -2033,6 +2224,7 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <h4><code><a title="hosh.hosh_.Hosh" href="#hosh.hosh_.Hosh">Hosh</a></code></h4>
 <ul class="two-column">
 <li><code><a title="hosh.hosh_.Hosh.ansi" href="#hosh.hosh_.Hosh.ansi">ansi</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.component" href="#hosh.hosh_.Hosh.component">component</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.convert" href="#hosh.hosh_.Hosh.convert">convert</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.decompose" href="#hosh.hosh_.Hosh.decompose">decompose</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.etype" href="#hosh.hosh_.Hosh.etype">etype</a></code></li>

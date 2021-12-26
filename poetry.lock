@@ -690,6 +690,11 @@ black = [
     {file = "black-21.12b0.tar.gz", hash = "sha256:77b80f693a569e2e527958459634f18df9b0ba2625ba4e0c2d5da5be42e6f2b3"},
 ]
 blake3 = [
+    {file = "blake3-0.2.1-cp310-cp310-macosx_10_7_x86_64.whl", hash = "sha256:228fd623d69ab67d82a420ce3b0ab5fd575ed9db215ca7e0a10d9417bbaedbcf"},
+    {file = "blake3-0.2.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:500d20efef13bcd7974240341eada92b1c640b31a51973e5166c51e00220fe32"},
+    {file = "blake3-0.2.1-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:c4d1a317c1937e7ddaba4c8d5316f2c08b56ef7591662496f523a96848969022"},
+    {file = "blake3-0.2.1-cp310-none-win32.whl", hash = "sha256:0500592524e2180c094aca77fd505cf727ce77a4d50ddd816a58c3def31aa7c3"},
+    {file = "blake3-0.2.1-cp310-none-win_amd64.whl", hash = "sha256:df90be81df4ac76e9cdbc4cc327caad08502b3cd61bcf3f6323445ac91d0abbe"},
     {file = "blake3-0.2.1-cp36-cp36m-macosx_10_7_x86_64.whl", hash = "sha256:de1c8eaa0f17628869e4fa3a2fdd119845950d6c786c67b723267c1988d6b25c"},
     {file = "blake3-0.2.1-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:868bff669115ffbeec6e759a89c228648aa58a6fcef8589342de6cb6b9ed8ca9"},
     {file = "blake3-0.2.1-cp36-none-win32.whl", hash = "sha256:6ea193219f38a37e838a61485df5f549ac151d3a8dbd41d9e3ebd894f5296b19"},
