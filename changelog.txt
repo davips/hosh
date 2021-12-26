@@ -1,1 +1,1 @@
-Add hosh.decompose()
+Add hosh.component(i,n)
