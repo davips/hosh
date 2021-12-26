@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>hosh API documentation</title>
-<meta name="description" content="hosh solves the problem of determining the identity of multi-valued objects or sequences of events
-(and provide extra modules for group theory)" />
+<title>hosh.hosh_ API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -20,11 +19,9 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>hosh</code></h1>
+<h1 class="title">Module <code>hosh.hosh_</code></h1>
 </header>
 <section id="section-intro">
-<p>hosh solves the problem of determining the identity of multi-valued objects or sequences of events
-(and provide extra modules for group theory)</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -48,172 +45,630 @@
 #
 #  (*) Removing authorship by any means, e.g. by distribution of derived
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
-#  part of this work is illegal and is unethical regarding the effort and
+#  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
-&#34;&#34;&#34;hosh solves the problem of determining the identity of multi-valued objects or sequences of events
-(and provide extra modules for group theory)&#34;&#34;&#34;
+from sys import maxsize
+from typing import Union
 
-from .config import setup
-from .groups import *
-from .hosh_ import Hosh as H
-from .misc.helper import Helper
-from .misc.identity import ø, Identity
-
-__pdoc__ = {
-    &#34;hosh&#34;: False,
-}
-
-Hosh = H
-&#34;&#34;&#34;All identifiers are instances of this class&#34;&#34;&#34;
-
-ħ = Helper(UT40_4)
-&#34;&#34;&#34;UTF-8 shortcut to create 40-digit Hosh objects (AltGr+H in most keyboards)
-
-Other options are also available: ħ16, ħ32, ħ40, ħ64&#34;&#34;&#34;
-
-identity = ø()
-&#34;&#34;&#34;Shortcut to the 40-digit identity Hosh object&#34;&#34;&#34;
-
-ø = identity
-&#34;&#34;&#34;UTF-8 shortcut to the 40-digit identity Hosh object (AltGr+O in most keyboards)
-
-Other options are also available: ø16, ø32, ø40, ø64&#34;&#34;&#34;
-
-ħ16, ħ32, ħ40, ħ64 = [Helper(version) for version in groups.values()]
-ø16, ø32, ø40, ø64 = [Identity(version) for version in groups.values()]
+from hosh.groups import UT40_4, groups
+from hosh.misc.colors import ansi2html, id2ansi, id2rgb
+from hosh.misc.core import cells_id_fromblob, cells_fromid, id_fromcells
+from hosh.misc.encoding.base777 import b777enc
+from hosh.misc.exception import (
+    WrongOperands,
+    WrongContent,
+    DanglingEtype,
+    CellValueTooHigh,
+    WrongIdentifier,
+    ElementTooHigh,
+    WrongVersion,
+)
+from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells
 
 
-def rho_elem(index, asbin=False):
+class Hosh:
     &#34;&#34;&#34;
-    &gt;&gt;&gt; rho_elem(1).id
-    &#39;L9.Vd4B6O6z0WdCgyk4mx1v118i91N.DkR7nS5Ua&#39;
-    &gt;&gt;&gt; rho_elem(2).id
-    &#39;Od4uNccS.19C9PuEHnzB-VK0GKFajq5VJUJi1rCf&#39;
-    &gt;&gt;&gt; rho_elem(2, asbin=True)
-    b&#39;&lt;RESERVED ELEMENT: rho_2&gt;&#39;
-    &#34;&#34;&#34;
-    r = f&#34;&lt;RESERVED ELEMENT: rho_{index}&gt;&#34;.encode()
-    return r if asbin else Hosh(r)
+    Operable hash.
 
+    Generate a Hosh object from a binary content or a list of 6 ints.
 
-def removal_elem(field, asbin=False):
+    Usage:
+
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; a = Hosh(b&#34;lots of data&#34;)
+    &gt;&gt;&gt; b = Hosh(b&#34;lots of data 2&#34;)
+    &gt;&gt;&gt; a.id
+    &#39;.-0byLo.CdKjKN6RFTYqBIy30OST3oLyjYPf.6p8&#39;
+    &gt;&gt;&gt; b.id
+    &#39;SXBse5Ie-yUCa7h7gZiHXGkkKdispqxlc4FnCYit&#39;
+    &gt;&gt;&gt; (a * b).id
+    &#39;ALiaB9XPu.MoIwwoTPYrxqkGfVpktOgUv0tDB3IB&#39;
+    &gt;&gt;&gt; (b * a).id
+    &#39;gr9psTs5dYGrCCdgWMAPWM4dDDzktOgUv0tDB3IB&#39;
+    &gt;&gt;&gt; a * b * ~b == a
+    True
+    &gt;&gt;&gt; c = Hosh(b&#34;lots of data 3&#34;)
+    &gt;&gt;&gt; (a * b) * c == a * (b * c)
+    True
+    &gt;&gt;&gt; e = Hosh(b&#34;lots of data 4&#34;)
+    &gt;&gt;&gt; f = Hosh(b&#34;lots of data 5&#34;)
+    &gt;&gt;&gt; e * f != f * e
+    True
+    &gt;&gt;&gt; a * b != b * a
+    True
+    &gt;&gt;&gt; x = Hosh(b&#34;lots of data 6&#34;, &#34;hybrid&#34;)
+    &gt;&gt;&gt; y = Hosh(b&#34;lots of data 7&#34;, &#34;hybrid&#34;)
+    &gt;&gt;&gt; z = Hosh(b&#34;lots of data 8&#34;, &#34;unordered&#34;)
+    &gt;&gt;&gt; x * y == y * x
+    True
+    &gt;&gt;&gt; x * a != a * x
+    True
+    &gt;&gt;&gt; x * z == z * x
+    True
+    &gt;&gt;&gt; a * z == z * a
+    True
+    &gt;&gt;&gt; from hosh import ø
+    &gt;&gt;&gt; print(ø)  # Handy syntax using ø for identity.
+    0000000000000000000000000000000000000000
+    &gt;&gt;&gt; print(ø * &#34;7ysdf98ys34hg543hdf98ysdf98ysdfysdf98ysd&#34;)  # str, bytes or int are converted as id, blob or element rank.
+    7ysdf98ys34hg543hdf98ysdf98ysdfysdf98ysd
+    &gt;&gt;&gt; print(ø * &#34;7ysdf98ysdf98ysdf98ysdfysdf98ysdasddsa32&#34; * &#34;6gdsf76dfqwe123de8gaf87gaf87gaf87agdfa78&#34;)
+    94UrdYKjCGQWdd5P.W4xvFJgc9hZpIHlhytqHkaa
+    &gt;&gt;&gt; h = ø.u * b&#34;sdff&#34;
+    &gt;&gt;&gt; print(h)
+    f_9e1a267c8_____________________________
+    &gt;&gt;&gt; x.id, (+x).id  # Making an ordered x.
+    (&#39;ZN_60eec3e6c7b68087329e16b581401a6bb2b1f&#39;, &#39;6BDj3b7Mmj7n-6B8XYaP3akO7400s9FlG4AtcHTp&#39;)
+    &gt;&gt;&gt; -x * y != y * -x
+    True
+    &gt;&gt;&gt; --x == x
+    True
+    &gt;&gt;&gt; x ** y == +(+x * +y)  # a ** b is a shortcut for +(+a * +b)
+    True
+    &gt;&gt;&gt; x ** y != y ** x
+    True
+    &gt;&gt;&gt; (x ** b&#34;1&#34;) * (y ** b&#34;2&#34;) != (x ** b&#34;2&#34;) * (y ** b&#34;1&#34;)
+    True
+    &gt;&gt;&gt; (x ** b&#34;1&#34;) * (y ** b&#34;2&#34;) == (y ** b&#34;2&#34;) * (x ** b&#34;1&#34;)
+    True
+    &gt;&gt;&gt; (x ** y) // y == x
+    True
+    &gt;&gt;&gt; f + e - x == ø - x + e + f  # Alternative (always unordered, i.e., form an Abelian group) operation
+    True
+
+    Parameters
+    ----------
+    content
+        Binary content to be hashed, or a list of six integers
+    etype
+        ordered, hybrid, unordered
+        According to the subset of the desired element: Z, H\\Z or G\\H
+    version
+        Group namedtuple: changes the number of digits and robustness against collisions
+        UT32_4 is enough for most usages. It accepts more than 4 billion repetitions of the same operation in a row.
+        UT64_4 provides unspeakable limits for operations, please see scientific paper for details.
+        UT40_4 is recommended and default, since it is the most compatible with other systems (git, SHA-1, etc)
     &#34;&#34;&#34;
-    &gt;&gt;&gt; removal_elem(&#34;_myfield&#34;).id
-    &#39;zZgRpxed-6aboKQ39.v5.HfBjr3j8WJlDwYVvUpi&#39;
-    &gt;&gt;&gt; removal_elem(&#34;myfield&#34;).id
-    &#39;eE-IoUO1EiZkxKkRyrXJcgXHc0pTD2As7IODrxTc&#39;
-    &gt;&gt;&gt; removal_elem(&#34;myfield&#34;, asbin=True)
-    b&#39;&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD myfield&gt;&#39;
-    &#34;&#34;&#34;
-    r = f&#34;&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD {field}&gt;&#34;.encode()
-    return r if asbin else Hosh(r)</code></pre>
+
+    shorter = False
+    _repr = None
+    _n, _id, _ansi, _sid, _sidc, _etype, _rgb = None, None, None, None, None, None, None
+    _etype_inducer, _bits, _ø = None, None, None
+
+    def __init__(self, content, etype=&#34;default:ordered&#34;, version=UT40_4):
+        self.version = version
+        self.p, self.p4, self.p6, self.digits, self.bytes, _, _, _, _, _, _ = version
+        if isinstance(content, list):
+            if etype != &#34;default:ordered&#34;:
+                raise DanglingEtype(f&#34;Cannot set etype={etype} when providing cells ({content}).&#34;)
+            if max(content) &gt;= self.p:
+                raise CellValueTooHigh(f&#34;A cell value exceeds the limit for the group: {max(content)} &gt;= {self.p}&#34;)
+            self.cells = content
+        elif isinstance(content, bytes):
+            if etype == &#34;default:ordered&#34;:
+                etype = &#34;ordered&#34;
+            self.cells, self._id = cells_id_fromblob(content, etype, self.bytes, self.p)
+        else:
+            raise WrongContent(
+                f&#34;No valid content provided: {content}\n&#34; f&#34;It should be a bytes object to be hashed or a list of ints.&#34;
+            )
+
+    @property
+    def ø(self):
+        &#34;&#34;&#34;Identity element compatible with this Hosh object
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; (b := Hosh(b&#34;23987rg23&#34;)).id
+        &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+        &gt;&gt;&gt; b.etype
+        &#39;ordered&#39;
+        &gt;&gt;&gt; b.ø.etype
+        &#39;unordered&#39;
+        &gt;&gt;&gt; b.etype == b.ø.etype_inducer
+        True
+        &gt;&gt;&gt; b.ø.id
+        &#39;0000000000000000000000000000000000000000&#39;
+        &gt;&gt;&gt; (b.ø * b&#34;qwer&#34;).etype
+        &#39;ordered&#39;
+        &#34;&#34;&#34;
+        if self._ø is None:
+            from hosh import Identity
+
+            self._ø = Identity(version=self.version, etype_inducer=self.etype)
+        return self._ø
+
+    @property
+    def etype(self):
+        &#34;&#34;&#34;
+        Type of this element
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; Hosh.fromn(5).etype
+        &#39;unordered&#39;
+
+        Returns
+        -------
+        &#39;ordered&#39;, &#39;hybrid&#39; or &#39;unordered&#39;
+        &#34;&#34;&#34;
+        if self._etype is None:
+            if sum(self.cells[:5]) == 0:
+                self._etype = &#34;unordered&#34;
+            elif sum(self.cells[:2]) == 0:
+                self._etype = &#34;hybrid&#34;
+            else:
+                self._etype = &#34;ordered&#34;
+        return self._etype
+
+    @property
+    def etype_inducer(self):
+        &#34;&#34;&#34;
+        Type this element uses to coerce an element of undefined type.
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import ø, Hosh
+        &gt;&gt;&gt; ø.etype_inducer
+        &#39;ordered&#39;
+        &gt;&gt;&gt; ø.h.etype_inducer
+        &#39;hybrid&#39;
+        &gt;&gt;&gt; ø.u.etype_inducer
+        &#39;unordered&#39;
+        &gt;&gt;&gt; Hosh(b&#34;12124&#34;).etype_inducer
+        &#39;ordered&#39;
+        &gt;&gt;&gt; Hosh(b&#34;12124&#34;, etype=&#34;hybrid&#34;).etype_inducer
+        &#39;hybrid&#39;
+
+        Returns
+        -------
+        &#39;ordered&#39;, &#39;hybrid&#39;, &#39;unordered&#39;
+        &#34;&#34;&#34;
+        if self._etype_inducer is None:
+            self._etype_inducer = self.etype
+        return self._etype_inducer
+
+    @property
+    def id(self):
+        &#34;&#34;&#34;
+        Textual representation of this element
+
+        Returns
+        -------
+        Textual representation
+        &#34;&#34;&#34;
+        if self._id is None:
+            self._id = id_fromcells(self.cells, self.digits, self.p)
+        return self._id
+
+    @classmethod
+    def fromid(cls, id):
+        &#34;&#34;&#34;
+        Create an element from a textual id.
+
+        Usage:
+
+        &gt;&gt;&gt; a = Hosh.fromid(&#34;abcdefabcdefabcdefabcdefabcdefab&#34;)
+        &gt;&gt;&gt; a.n
+        1094566309952642687224764830259410933250743749332933330234
+        &gt;&gt;&gt; a.cells
+        [748932665, 516513868, 468764361, 3316970622, 2727293743, 316029245]
+        &gt;&gt;&gt; a.etype
+        &#39;ordered&#39;
+        &gt;&gt;&gt; bid = a.id[:2] + &#34;_&#34; + a.id[3:]
+        &gt;&gt;&gt; bid
+        &#39;ab_defabcdefabcdefabcdefabcdefab&#39;
+        &gt;&gt;&gt; b = Hosh.fromid(bid)
+        &gt;&gt;&gt; b.id
+        &#39;ab_defabcdefabcdefabcdefabcdefab&#39;
+        &gt;&gt;&gt; b.n
+        59377482839139050825606534576063885287
+        &gt;&gt;&gt; b.cells
+        [0, 0, 749449200, 1774140626, 3139018916, 292801225]
+        &gt;&gt;&gt; b.etype
+        &#39;hybrid&#39;
+        &gt;&gt;&gt; Hosh.fromid(&#34;0000000000000000000000000000000000000000000000000000000000000000&#34;) == 0
+        True
+
+        Parameters
+        ----------
+        id
+
+        Parameters
+        ----------
+        id
+
+        Returns
+        -------
+        A new Hosh object
+        &#34;&#34;&#34;
+
+        if len(id) not in groups:
+            raise WrongIdentifier(f&#34;Wrong identifier length: {len(id)}   id:[{id}]&#34;)
+        return Hosh(cells_fromid(id, p=groups[len(id)].p), version=groups[len(id)])
+
+    @classmethod
+    def fromn(cls, n: int, version=UT40_4):
+        &#34;&#34;&#34;
+        Create a Hosh object representing the given int.
+
+        Default &#39;p&#39; is according to version UT64.4.
+
+        Usage:
+
+        &gt;&gt;&gt; h = Hosh.fromn(7647544756746324134134)
+        &gt;&gt;&gt; h.id
+        &#39;00_e49c1c505dcd0039e91000000000000000000&#39;
+
+        Parameters
+        ----------
+        n
+        version
+
+        Returns
+        -------
+        A new Hosh object
+        &#34;&#34;&#34;
+        p, order = version.p, version.p6
+        if n &gt; order:
+            raise ElementTooHigh(f&#34;Element outside allowed range: {n} &gt;= {order}&#34;)
+        return Hosh(int2cells(n, p), version=version)
+
+    @property
+    def n(self):
+        &#34;&#34;&#34;
+        Lexicographic rank of this eloement (according to the format adopted in internal integer cells.
+
+        Returns
+        -------
+        Number
+        &#34;&#34;&#34;
+        if self._n is None:
+            self._n = cells2int(self.cells, self.p)
+        return self._n
+
+    @property
+    def sid(self):
+        &#34;&#34;&#34;
+        Shorter id (base-922 using up to 2 bytes utf8 per char)
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; (ø * b&#39;65e987978g&#39;).sid
+        &#39;ȟɟìӧДɫŖāöơɟբƢŊþXÊϱՎҲģţՀɄЌ&#39;
+
+        Returns
+        -------
+        Short utf-8 textual representation
+        &#34;&#34;&#34;
+        if self._sid is None:
+            self._sid = b777enc(self.n, self.digits * 5 // 8)
+        return self._sid
+
+    @property
+    def ansi(self):
+        r&#34;&#34;&#34;
+        Colored textual (ANSI) representation of this element
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).ansi
+        &#39;\x1b[38;5;229m\x1b[1m\x1b[48;5;0mI\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mz\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0m3\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m7\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m2\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mB\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mQ\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mv\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0m0\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mi\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mO\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mj\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mW\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ma\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0ml\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0me\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m6\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mL\x1b[0m\x1b[38;5;216m\x1b[1m\x1b[48;5;0mY\x1b[0m\x1b[38;5;186m\x1b[1m\x1b[48;5;0mF\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mT\x1b[0m\x1b[38;5;221m\x1b[1m\x1b[48;5;0mG\x1b[0m\x1b[38;5;181m\x1b[1m\x1b[48;5;0mm\x1b[0m\x1b[38;5;194m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;229m\x1b[1m\x1b[48;5;0mJ\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0m1\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mZ\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m\x1b[38;5;228m\x1b[1m\x1b[48;5;0mf\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0md\x1b[0m\x1b[38;5;222m\x1b[1m\x1b[48;5;0mo\x1b[0m\x1b[38;5;223m\x1b[1m\x1b[48;5;0mP\x1b[0m&#39;
+
+        Returns
+        -------
+        Textual representation
+        &#34;&#34;&#34;
+        if self._ansi is None:
+            self._ansi = id2ansi(self.id)
+        return self._ansi
+
+    @property
+    def idc(self):
+        return self.ansi
+
+    @property
+    def rgb(self):
+        &#34;&#34;&#34;
+        Colored textual (RGB) representation of this element
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; Hosh.fromid(&#34;Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP&#34;).rgb
+        [[6, 28, 104], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187]]
+        &#34;&#34;&#34;
+        if self._rgb is None:
+            self._rgb = id2rgb(self.id)
+        return self._rgb
+
+    @property
+    def html(self):
+        &#34;&#34;&#34;
+        HTML page containing a colored textual representation of this element
+
+        Returns
+        -------
+        Textual representation
+        &#34;&#34;&#34;
+        return ansi2html(self.ansi)
+
+    @property
+    def sidc(self):
+        &#34;&#34;&#34;
+        Shorter colored id (base-922 using up to 2 bytes utf8 per char)
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sidc)
+        \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
+
+        Returns
+        -------
+        Short utf-8 colored textual representation
+        &#34;&#34;&#34;
+        if self._sidc is None:
+            self._sidc = id2ansi(self.sid)
+        return self._sidc
+
+    def __repr__(self):
+        if self._repr is None:
+            self._repr = self.sidc if Hosh.shorter else self.idc
+        return self._repr
+
+    # @property
+    # def bits(self):
+    #     if self._bits is None:
+    #         self._bits = bin(self.n)[2:].rjust(256, &#34;0&#34;)
+    #     return self._bits
+
+    def __mul__(self, other: Union[&#34;Hosh&#34;, str, bytes, int]):
+        return Hosh(cellsmul(self.cells, self.convert(other).cells, self.p), version=self.version)
+
+    def __rmul__(self, other: Union[&#34;Hosh&#34;, str, bytes, int]):
+        &#34;&#34;&#34;
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34; )* b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; * (ø * b&#34;434vbfrdg&#34;)
+        True
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        &#34;&#34;&#34;
+        return Hosh(cellsmul(self.convert(other).cells, self.cells, self.p), version=self.version)
+
+    def __rpow__(self, other):
+        &#34;&#34;&#34;
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) ** b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; ** (ø * b&#34;434vbfrdg&#34;)
+        True
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        &#34;&#34;&#34;
+        return +(+self.convert(other) * +self)
+
+    def __pow__(self, power, modulo=None):
+        return +(+self * +self.convert(power))
+
+    def __rfloordiv__(self, other):
+        &#34;&#34;&#34;
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) // b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; // (ø * b&#34;434vbfrdg&#34;)
+        True
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        &#34;&#34;&#34;
+        return +(+self.convert(other) / +self)
+
+    def __floordiv__(self, other):
+        &#34;&#34;&#34;Lift&#34;&#34;&#34;
+        return +(+self / +self.convert(other))
+
+    def __neg__(self):
+        &#34;&#34;&#34;Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
+        ps. This differs from +hosh because it creates a lower element.
+
+        Switch positions of cells a2 and a4. This operation is it own inverse.
+
+        Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
+        Cells are represented as a matrix in the format:
+        1 a4 a1 a0
+        0  1 a2 a3
+        0  0  1 a5
+        0  0  0  1
+
+        &#34;&#34;&#34;
+        cells = self.cells.copy()
+        cells[3] = cells[1]
+        cells[1] = self.cells[3]
+        return Hosh(cells, version=self.version)
+
+    def __pos__(self):
+        &#34;&#34;&#34;Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
+        ps. This differs from -hosh because it creates a higher element.
+        For this reason it is adopted in __floordiv__
+
+        Switch positions of cells a2 and a5. This operation is it own inverse.
+
+        Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
+        Cells are represented as a matrix in the format:
+        1 a4 a1 a0
+        0  1 a2 a3
+        0  0  1 a5
+        0  0  0  1
+
+        &#34;&#34;&#34;
+        cells = self.cells.copy()
+        cells[3] = cells[0]
+        cells[0] = self.cells[3]
+        return Hosh(cells, version=self.version)
+
+    def __invert__(self):
+        return Hosh(cellsinv(self.cells, self.p), version=self.version)
+
+    def __rtruediv__(self, other):
+        &#34;&#34;&#34;
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; (ø * b&#34;13dfv34y4&#34;) / b&#34;434vbfrdg&#34; == b&#34;13dfv34y4&#34; / (ø * b&#34;434vbfrdg&#34;)
+        True
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        &#34;&#34;&#34;
+        return Hosh(cellsmul(self.convert(other).cells, cellsinv(self.cells, self.p), self.p), version=self.version)
+
+    def __truediv__(self, other):
+        return Hosh(cellsmul(self.cells, cellsinv(self.convert(other).cells, self.p), self.p), version=self.version)
+
+    def __add__(self, other):
+        &#34;&#34;&#34;Matrix addition modulo p, keeping unidiagonal&#34;&#34;&#34;
+        cells = list(map(lambda x, y: (x + y) % self.p, self.cells, self.convert(other).cells))
+        return Hosh(cells, version=self.version)
+
+    def __sub__(self, other):
+        &#34;&#34;&#34;Matrix subtraction modulo p, keeping unidiagonal&#34;&#34;&#34;
+        cells = list(map(lambda x, y: (x - y) % self.p, self.cells, self.convert(other).cells))
+        return Hosh(cells, version=self.version)
+        # REMINDER: the chosen implementation differs from the alternative bellow!
+        # return Hosh.fromn((self.n + self.convert(other).n) % self.order, self.version)
+
+    def __str__(self):
+        return self.sid if Hosh.shorter else self.id
+
+    def __eq__(self, other):
+        return self.n == self.convert(other).n
+
+    def __ne__(self, other):
+        return self.n != self.convert(other).n
+
+    def show(self, colored=True):
+        &#34;&#34;&#34;
+        Usage:
+
+        &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).show(colored=False)
+        voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
+        &#34;&#34;&#34;
+        return print(self.idc if colored else self.id)
+
+    def short(self, colored=True):
+        &#34;&#34;&#34;
+        Usage:
+
+        &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).short(colored=False)
+        lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
+        &#34;&#34;&#34;
+        return print(self.sidc if colored else self.sid)
+
+    def __hash__(self):
+        return self.n % maxsize
+
+    def convert(self, other):
+        &#34;&#34;&#34;
+        Usage:
+
+        &gt;&gt;&gt; from hosh import ø
+        &gt;&gt;&gt; ø.convert([0,0,0,0,0,0]).id
+        &#39;0000000000000000000000000000000000000000&#39;
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; ø.convert(0).id
+        &#39;0000000000000000000000000000000000000000&#39;
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        &#34;&#34;&#34;
+        if isinstance(other, str):
+            other = Hosh.fromid(other)
+        elif isinstance(other, bytes):
+            other = Hosh(other, etype=self.etype_inducer, version=self.version)
+        elif isinstance(other, int):
+            other = Hosh.fromn(other, version=self.version)
+        elif isinstance(other, list):
+            other = Hosh(other, version=self.version)
+        elif not isinstance(other, Hosh):
+            raise WrongOperands(
+                id(self.__class__), id(other.__class__), f&#34;Cannot convert {type(other)} to {type(self)}.&#34;
+            )
+        if self.version != other.version:
+            raise WrongVersion(f&#34;Incompatible operands: {self.version} != {other.version}&#34;)
+        return other
+
+    def decompose(self, n):
+        &#34;&#34;&#34;
+        Find &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+
+        &gt;&gt;&gt; from functools import reduce
+        &gt;&gt;&gt; import operator
+        &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
+        True
+        &#34;&#34;&#34;
+
+        def fac(x):
+            d = sum(i for i in range(1, n + 1))
+            lst = [i * (x + self.p) // d for i in range(1, n + 1)]
+            lst[-1] += x - sum(lst)
+            return [l % self.p for l in lst]
+
+        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="hosh.config" href="config.html">hosh.config</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="hosh.groups" href="groups.html">hosh.groups</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="hosh.hosh_" href="hosh_.html">hosh.hosh_</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="hosh.misc" href="misc/index.html">hosh.misc</a></code></dt>
-<dd>
-<div class="desc"><p>Support modules are hidden here to avoid polluting the API</p></div>
-</dd>
-</dl>
 </section>
 <section>
-<h2 class="section-title" id="header-variables">Global variables</h2>
-<dl>
-<dt id="hosh.identity"><code class="name">var <span class="ident">identity</span></code></dt>
-<dd>
-<div class="desc"><p>Shortcut to the 40-digit identity Hosh object</p></div>
-</dd>
-<dt id="hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
-<dd>
-<div class="desc"><p>UTF-8 shortcut to the 40-digit identity Hosh object (AltGr+O in most keyboards)</p>
-<p>Other options are also available: ø16, ø32, ø40, ø64</p></div>
-</dd>
-<dt id="hosh.ħ"><code class="name">var <span class="ident">ħ</span></code></dt>
-<dd>
-<div class="desc"><p>UTF-8 shortcut to create 40-digit Hosh objects (AltGr+H in most keyboards)</p>
-<p>Other options are also available: ħ16, ħ32, ħ40, ħ64</p></div>
-</dd>
-</dl>
 </section>
 <section>
-<h2 class="section-title" id="header-functions">Functions</h2>
-<dl>
-<dt id="hosh.removal_elem"><code class="name flex">
-<span>def <span class="ident">removal_elem</span></span>(<span>field, asbin=False)</span>
-</code></dt>
-<dd>
-<div class="desc"><pre><code class="language-python-repl">&gt;&gt;&gt; removal_elem(&quot;_myfield&quot;).id
-'zZgRpxed-6aboKQ39.v5.HfBjr3j8WJlDwYVvUpi'
-&gt;&gt;&gt; removal_elem(&quot;myfield&quot;).id
-'eE-IoUO1EiZkxKkRyrXJcgXHc0pTD2As7IODrxTc'
-&gt;&gt;&gt; removal_elem(&quot;myfield&quot;, asbin=True)
-b'&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD myfield&gt;'
-</code></pre></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def removal_elem(field, asbin=False):
-    &#34;&#34;&#34;
-    &gt;&gt;&gt; removal_elem(&#34;_myfield&#34;).id
-    &#39;zZgRpxed-6aboKQ39.v5.HfBjr3j8WJlDwYVvUpi&#39;
-    &gt;&gt;&gt; removal_elem(&#34;myfield&#34;).id
-    &#39;eE-IoUO1EiZkxKkRyrXJcgXHc0pTD2As7IODrxTc&#39;
-    &gt;&gt;&gt; removal_elem(&#34;myfield&#34;, asbin=True)
-    b&#39;&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD myfield&gt;&#39;
-    &#34;&#34;&#34;
-    r = f&#34;&lt;RESERVED ELEMENT: DELETE VALUE AT FIELD {field}&gt;&#34;.encode()
-    return r if asbin else Hosh(r)</code></pre>
-</details>
-</dd>
-<dt id="hosh.rho_elem"><code class="name flex">
-<span>def <span class="ident">rho_elem</span></span>(<span>index, asbin=False)</span>
-</code></dt>
-<dd>
-<div class="desc"><pre><code class="language-python-repl">&gt;&gt;&gt; rho_elem(1).id
-'L9.Vd4B6O6z0WdCgyk4mx1v118i91N.DkR7nS5Ua'
-&gt;&gt;&gt; rho_elem(2).id
-'Od4uNccS.19C9PuEHnzB-VK0GKFajq5VJUJi1rCf'
-&gt;&gt;&gt; rho_elem(2, asbin=True)
-b'&lt;RESERVED ELEMENT: rho_2&gt;'
-</code></pre></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def rho_elem(index, asbin=False):
-    &#34;&#34;&#34;
-    &gt;&gt;&gt; rho_elem(1).id
-    &#39;L9.Vd4B6O6z0WdCgyk4mx1v118i91N.DkR7nS5Ua&#39;
-    &gt;&gt;&gt; rho_elem(2).id
-    &#39;Od4uNccS.19C9PuEHnzB-VK0GKFajq5VJUJi1rCf&#39;
-    &gt;&gt;&gt; rho_elem(2, asbin=True)
-    b&#39;&lt;RESERVED ELEMENT: rho_2&gt;&#39;
-    &#34;&#34;&#34;
-    r = f&#34;&lt;RESERVED ELEMENT: rho_{index}&gt;&#34;.encode()
-    return r if asbin else Hosh(r)</code></pre>
-</details>
-</dd>
-</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="hosh.Hosh"><code class="flex name class">
+<dt id="hosh.hosh_.Hosh"><code class="flex name class">
 <span>class <span class="ident">Hosh</span></span>
 <span>(</span><span>content, etype='default:ordered', version=Group(p=1099511627689, p4=1461501636868331575725436266114840805196834679841, p6=1766847063939562670646036165286872353986524172769430561878277294118845361, digits=40, bytes=30, firstp='0_100000000_____________________________', lastp='f_8afffffff_____________________________', firstp4='00_1000000000000000000000000000000000000', lastp4='.._87c2a630003eec7dffff561b0000004aeffff', firstp6='1000000000000000000000000000000000000000', lastp6='g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....'))</span>
 </code></dt>
@@ -898,14 +1353,14 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="hosh.Hosh.shorter"><code class="name">var <span class="ident">shorter</span></code></dt>
+<dt id="hosh.hosh_.Hosh.shorter"><code class="name">var <span class="ident">shorter</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Static methods</h3>
 <dl>
-<dt id="hosh.Hosh.fromid"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.fromid"><code class="name flex">
 <span>def <span class="ident">fromid</span></span>(<span>id)</span>
 </code></dt>
 <dd>
@@ -945,7 +1400,7 @@ True
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>A new <a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a> object</code></dt>
+<dt><code>A new <a title="hosh.hosh_.Hosh" href="#hosh.hosh_.Hosh">Hosh</a> object</code></dt>
 <dd>&nbsp;</dd>
 </dl></div>
 <details class="source">
@@ -999,7 +1454,7 @@ def fromid(cls, id):
     return Hosh(cells_fromid(id, p=groups[len(id)].p), version=groups[len(id)])</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.fromn"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.fromn"><code class="name flex">
 <span>def <span class="ident">fromn</span></span>(<span>n: int, version=Group(p=1099511627689, p4=1461501636868331575725436266114840805196834679841, p6=1766847063939562670646036165286872353986524172769430561878277294118845361, digits=40, bytes=30, firstp='0_100000000_____________________________', lastp='f_8afffffff_____________________________', firstp4='00_1000000000000000000000000000000000000', lastp4='.._87c2a630003eec7dffff561b0000004aeffff', firstp6='1000000000000000000000000000000000000000', lastp6='g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....'))</span>
 </code></dt>
 <dd>
@@ -1019,7 +1474,7 @@ def fromid(cls, id):
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>A new <a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a> object</code></dt>
+<dt><code>A new <a title="hosh.hosh_.Hosh" href="#hosh.hosh_.Hosh">Hosh</a> object</code></dt>
 <dd>&nbsp;</dd>
 </dl></div>
 <details class="source">
@@ -1057,7 +1512,7 @@ def fromn(cls, n: int, version=UT40_4):
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="hosh.Hosh.ansi"><code class="name">var <span class="ident">ansi</span></code></dt>
+<dt id="hosh.hosh_.Hosh.ansi"><code class="name">var <span class="ident">ansi</span></code></dt>
 <dd>
 <div class="desc"><p>Colored textual (ANSI) representation of this element</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
@@ -1091,7 +1546,7 @@ def ansi(self):
     return self._ansi</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.etype"><code class="name">var <span class="ident">etype</span></code></dt>
+<dt id="hosh.hosh_.Hosh.etype"><code class="name">var <span class="ident">etype</span></code></dt>
 <dd>
 <div class="desc"><p>Type of this element</p>
 <p>Usage:</p>
@@ -1130,7 +1585,7 @@ def etype(self):
     return self._etype</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.etype_inducer"><code class="name">var <span class="ident">etype_inducer</span></code></dt>
+<dt id="hosh.hosh_.Hosh.etype_inducer"><code class="name">var <span class="ident">etype_inducer</span></code></dt>
 <dd>
 <div class="desc"><p>Type this element uses to coerce an element of undefined type.</p>
 <p>Usage:</p>
@@ -1180,7 +1635,7 @@ def etype_inducer(self):
     return self._etype_inducer</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.html"><code class="name">var <span class="ident">html</span></code></dt>
+<dt id="hosh.hosh_.Hosh.html"><code class="name">var <span class="ident">html</span></code></dt>
 <dd>
 <div class="desc"><p>HTML page containing a colored textual representation of this element</p>
 <h2 id="returns">Returns</h2>
@@ -1204,7 +1659,7 @@ def html(self):
     return ansi2html(self.ansi)</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dt id="hosh.hosh_.Hosh.id"><code class="name">var <span class="ident">id</span></code></dt>
 <dd>
 <div class="desc"><p>Textual representation of this element</p>
 <h2 id="returns">Returns</h2>
@@ -1230,7 +1685,7 @@ def id(self):
     return self._id</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.idc"><code class="name">var <span class="ident">idc</span></code></dt>
+<dt id="hosh.hosh_.Hosh.idc"><code class="name">var <span class="ident">idc</span></code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
@@ -1242,7 +1697,7 @@ def idc(self):
     return self.ansi</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.n"><code class="name">var <span class="ident">n</span></code></dt>
+<dt id="hosh.hosh_.Hosh.n"><code class="name">var <span class="ident">n</span></code></dt>
 <dd>
 <div class="desc"><p>Lexicographic rank of this eloement (according to the format adopted in internal integer cells.</p>
 <h2 id="returns">Returns</h2>
@@ -1268,7 +1723,7 @@ def n(self):
     return self._n</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.rgb"><code class="name">var <span class="ident">rgb</span></code></dt>
+<dt id="hosh.hosh_.Hosh.rgb"><code class="name">var <span class="ident">rgb</span></code></dt>
 <dd>
 <div class="desc"><p>Colored textual (RGB) representation of this element</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
@@ -1293,7 +1748,7 @@ def rgb(self):
     return self._rgb</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.sid"><code class="name">var <span class="ident">sid</span></code></dt>
+<dt id="hosh.hosh_.Hosh.sid"><code class="name">var <span class="ident">sid</span></code></dt>
 <dd>
 <div class="desc"><p>Shorter id (base-922 using up to 2 bytes utf8 per char)</p>
 <p>Usage:</p>
@@ -1330,7 +1785,7 @@ def sid(self):
     return self._sid</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.sidc"><code class="name">var <span class="ident">sidc</span></code></dt>
+<dt id="hosh.hosh_.Hosh.sidc"><code class="name">var <span class="ident">sidc</span></code></dt>
 <dd>
 <div class="desc"><p>Shorter colored id (base-922 using up to 2 bytes utf8 per char)</p>
 <p>Usage:</p>
@@ -1367,7 +1822,7 @@ def sidc(self):
     return self._sidc</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
+<dt id="hosh.hosh_.Hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
 <dd>
 <div class="desc"><p>Identity element compatible with this Hosh object</p>
 <p>Usage:</p>
@@ -1419,7 +1874,7 @@ def ø(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="hosh.Hosh.convert"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.convert"><code class="name flex">
 <span>def <span class="ident">convert</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -1479,7 +1934,7 @@ def ø(self):
     return other</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.decompose"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.decompose"><code class="name flex">
 <span>def <span class="ident">decompose</span></span>(<span>self, n)</span>
 </code></dt>
 <dd>
@@ -1512,7 +1967,7 @@ True
     return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.short"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.short"><code class="name flex">
 <span>def <span class="ident">short</span></span>(<span>self, colored=True)</span>
 </code></dt>
 <dd>
@@ -1534,7 +1989,7 @@ lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
     return print(self.sidc if colored else self.sid)</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.show"><code class="name flex">
+<dt id="hosh.hosh_.Hosh.show"><code class="name flex">
 <span>def <span class="ident">show</span></span>(<span>self, colored=True)</span>
 </code></dt>
 <dd>
@@ -1567,50 +2022,34 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="hosh.config" href="config.html">hosh.config</a></code></li>
-<li><code><a title="hosh.groups" href="groups.html">hosh.groups</a></code></li>
-<li><code><a title="hosh.hosh_" href="hosh_.html">hosh.hosh_</a></code></li>
-<li><code><a title="hosh.misc" href="misc/index.html">hosh.misc</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-variables">Global variables</a></h3>
-<ul class="">
-<li><code><a title="hosh.identity" href="#hosh.identity">identity</a></code></li>
-<li><code><a title="hosh.ø" href="#hosh.ø">ø</a></code></li>
-<li><code><a title="hosh.ħ" href="#hosh.ħ">ħ</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
-<li><code><a title="hosh.removal_elem" href="#hosh.removal_elem">removal_elem</a></code></li>
-<li><code><a title="hosh.rho_elem" href="#hosh.rho_elem">rho_elem</a></code></li>
+<li><code><a title="hosh" href="index.html">hosh</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a></code></h4>
+<h4><code><a title="hosh.hosh_.Hosh" href="#hosh.hosh_.Hosh">Hosh</a></code></h4>
 <ul class="two-column">
-<li><code><a title="hosh.Hosh.ansi" href="#hosh.Hosh.ansi">ansi</a></code></li>
-<li><code><a title="hosh.Hosh.convert" href="#hosh.Hosh.convert">convert</a></code></li>
-<li><code><a title="hosh.Hosh.decompose" href="#hosh.Hosh.decompose">decompose</a></code></li>
-<li><code><a title="hosh.Hosh.etype" href="#hosh.Hosh.etype">etype</a></code></li>
-<li><code><a title="hosh.Hosh.etype_inducer" href="#hosh.Hosh.etype_inducer">etype_inducer</a></code></li>
-<li><code><a title="hosh.Hosh.fromid" href="#hosh.Hosh.fromid">fromid</a></code></li>
-<li><code><a title="hosh.Hosh.fromn" href="#hosh.Hosh.fromn">fromn</a></code></li>
-<li><code><a title="hosh.Hosh.html" href="#hosh.Hosh.html">html</a></code></li>
-<li><code><a title="hosh.Hosh.id" href="#hosh.Hosh.id">id</a></code></li>
-<li><code><a title="hosh.Hosh.idc" href="#hosh.Hosh.idc">idc</a></code></li>
-<li><code><a title="hosh.Hosh.n" href="#hosh.Hosh.n">n</a></code></li>
-<li><code><a title="hosh.Hosh.rgb" href="#hosh.Hosh.rgb">rgb</a></code></li>
-<li><code><a title="hosh.Hosh.short" href="#hosh.Hosh.short">short</a></code></li>
-<li><code><a title="hosh.Hosh.shorter" href="#hosh.Hosh.shorter">shorter</a></code></li>
-<li><code><a title="hosh.Hosh.show" href="#hosh.Hosh.show">show</a></code></li>
-<li><code><a title="hosh.Hosh.sid" href="#hosh.Hosh.sid">sid</a></code></li>
-<li><code><a title="hosh.Hosh.sidc" href="#hosh.Hosh.sidc">sidc</a></code></li>
-<li><code><a title="hosh.Hosh.ø" href="#hosh.Hosh.ø">ø</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.ansi" href="#hosh.hosh_.Hosh.ansi">ansi</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.convert" href="#hosh.hosh_.Hosh.convert">convert</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.decompose" href="#hosh.hosh_.Hosh.decompose">decompose</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.etype" href="#hosh.hosh_.Hosh.etype">etype</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.etype_inducer" href="#hosh.hosh_.Hosh.etype_inducer">etype_inducer</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.fromid" href="#hosh.hosh_.Hosh.fromid">fromid</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.fromn" href="#hosh.hosh_.Hosh.fromn">fromn</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.html" href="#hosh.hosh_.Hosh.html">html</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.id" href="#hosh.hosh_.Hosh.id">id</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.idc" href="#hosh.hosh_.Hosh.idc">idc</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.n" href="#hosh.hosh_.Hosh.n">n</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.rgb" href="#hosh.hosh_.Hosh.rgb">rgb</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.short" href="#hosh.hosh_.Hosh.short">short</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.shorter" href="#hosh.hosh_.Hosh.shorter">shorter</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.show" href="#hosh.hosh_.Hosh.show">show</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.sid" href="#hosh.hosh_.Hosh.sid">sid</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.sidc" href="#hosh.hosh_.Hosh.sidc">sidc</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.ø" href="#hosh.hosh_.Hosh.ø">ø</a></code></li>
 </ul>
 </li>
 </ul>
