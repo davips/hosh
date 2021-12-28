@@ -19,6 +19,8 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
+import operator
+from functools import reduce
 from sys import maxsize
 from typing import Union
 
@@ -35,7 +37,7 @@ from hosh.misc.exception import (
     ElementTooHigh,
     WrongVersion,
 )
-from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells
+from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells, cellspow, cellsroot
 
 
 class Hosh:
@@ -130,6 +132,7 @@ class Hosh:
     def __init__(self, content, etype="default:ordered", version=UT40_4):
         self.version = version
         self.p, self.p4, self.p6, self.digits, self.bytes, _, _, _, _, _, _ = version
+        self._composition_nolast = {}
         if isinstance(content, list):
             if etype != "default:ordered":
                 raise DanglingEtype(f"Cannot set etype={etype} when providing cells ({content}).")
@@ -679,3 +682,52 @@ class Hosh:
             return (i * parc + toggle * rem) % p
 
         return Hosh(list(fac(c) for c in self.cells))
+
+    def __getitem__(self, item):
+        """
+        Multiplicative decomposition based on rho* values
+
+        Syntax:
+            Hosh(b"blob")[:n]           # Takes all 'n' components.
+            Hosh(b"blob")[index:n]      # Takes a single component out of 'n'.
+
+        Use arbitrarily internally defined rho elements:
+        b"<rho_1>", b"<rho_2>", ..., b"<rho_n>"
+
+        The last element makes the multiplication x1*x2*...*xn match x:
+        x1      = b"<rho_1>" * x
+         ...
+        xn-1    = b"<rho_n-1>" * x
+        xn      = (b"<rho_1>" * x * ... * b"<rho_n-1>")-¹
+        >>> a = Hosh(b"a")
+        >>> a[:1] == a
+        True
+        >>> a[:3][0] * a[:3][1] * a[:3][2] == a
+        True
+        >>> a[0:3] * a[1:3] * a[2:3] == a
+        True
+
+        """
+        if not isinstance(item, slice) or item.step is not None or (n := item.stop) is None:  # pragma: no cover
+            raise Exception("Wrong syntax, expected: hosh[:n] or hosh[index:n]")
+        if (index := item.start) is not None:
+            if index >= n or index < 0:  # pragma: no cover
+                raise Exception(f"Wrong values: i ({index}) >= n ({n}) (or negative)")
+            if index < n - 1:
+                return f"<rho_{index}>".encode() * self
+            return ~self.composition_nolast(n) * self
+        if n == 1:
+            return self
+        if n <= 0:  # pragma: no cover
+            raise Exception(f"Wrong value: n ({n}) <= 0")
+        lst = [f"<rho_{i}>".encode() * self for i in range(n - 1)]
+        lst.append(~reduce(operator.mul, lst) * self)
+        return lst
+
+    def composition_nolast(self, n):
+        if n not in self._composition_nolast:
+            if len(self._composition_nolast) > 5:  # pragma: no cover
+                first = next(iter(self._composition_nolast))
+                del self._composition_nolast[first]
+            self._composition_nolast[n] = reduce(operator.mul, (f"<rho_{i}>".encode() * self for i in range(n - 1)))
+        return self._composition_nolast[n]
