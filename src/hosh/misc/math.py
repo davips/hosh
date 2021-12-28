@@ -23,6 +23,9 @@
 """
 Pure Python linear algebra module
 """
+from hosh.misc.root import root
+
+cellsroot = root
 
 
 def int2cells(num, mod):
@@ -160,3 +163,10 @@ def cellsinv(m, mod):
         (m[1] * m[3] - m[4]) % mod,
         (m[1] * m[2] + m[4] * m[0] - m[1] * m[3] * m[0] - m[5]) % mod,
     ]
+
+
+def cellspow(m, k, mod):
+    result_cells = [0, 0, 0, 0, 0, 0]
+    for i in range(0, k):
+        result_cells = cellsmul(result_cells, m, mod)
+    return result_cells

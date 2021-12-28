@@ -418,6 +418,11 @@ class Hosh:
     #         self._bits = bin(self.n)[2:].rjust(256, "0")
     #     return self._bits
 
+    def __xor__(self, other: int):
+        if other == 1:
+            return self
+        return Hosh(cellspow(self.cells, other, self.p), version=self.version)
+
     def __mul__(self, other: Union["Hosh", str, bytes, int]):
         return Hosh(cellsmul(self.cells, self.convert(other).cells, self.p), version=self.version)
 
@@ -615,7 +620,45 @@ class Hosh:
             raise WrongVersion(f"Incompatible operands: {self.version} != {other.version}")
         return other
 
-    def decompose(self, n):
+    def root(self, k):
+        """
+        >>> a = Hosh(b"a")
+        >>> for i in range(1, 5):
+        ...     r = a.root(i)
+        ...     r^i == a
+        True
+        True
+        True
+        True
+        """
+        if k == 1:
+            return self
+        return Hosh(cellsroot(self.cells, k, self.p))
+
+    def multiplicative_component(self, i, n):
+        """Elements within 'n' components of "multiplicative" decomposition
+
+        Resulting elements commute among themselves.
+
+        >>> a = Hosh(b"a")
+        >>> a.multiplicative_component(0, 1) == a
+        True
+        >>> a.multiplicative_component(0, 2) * a.multiplicative_component(1, 2) == a
+        True
+        >>> a.multiplicative_component(0, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(2, 3) == a
+        True
+        >>> a.multiplicative_component(2, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(0, 3) == a
+        True
+        """
+        if i >= n:  # pragma: no cover
+            raise Exception(f"Hosh component should be defined by 'index' ({i}) < '#components' ({n})")
+        if n == 1:
+            return self
+        exp = n * (n + 1) // 2
+        r = self.root(exp)
+        return r ^ (i + 1)
+
+    def additive_decomposition(self, n):
         """
         Return the 'n' additive components for 'x' such that 'x = c1+c2+...+cn'
 
@@ -623,7 +666,7 @@ class Hosh:
 
         >>> from functools import reduce
         >>> import operator
-        >>> reduce(operator.add, Hosh(b"x").decompose(5)) == Hosh(b"x")
+        >>> reduce(operator.add, Hosh(b"x").additive_decomposition(5)) == Hosh(b"x")
         True
         """
         den = n * (n + 1) // 2
@@ -637,7 +680,7 @@ class Hosh:
 
         return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))
 
-    def component(self, i, n):
+    def additive_component(self, i, n):
         """
         Return the 'i'-th component of the additive decomposition of current hosh
 
@@ -645,31 +688,31 @@ class Hosh:
 
         >>> from functools import reduce
         >>> import operator
-        >>> list(Hosh(b"x").decompose(2))[0] == Hosh(b"x").component(0, 2)
+        >>> list(Hosh(b"x").additive_decomposition(2))[0] == Hosh(b"x").additive_component(0, 2)
         True
-        >>> list(Hosh(b"x").decompose(2))[1] == Hosh(b"x").component(1, 2)
+        >>> list(Hosh(b"x").additive_decomposition(2))[1] == Hosh(b"x").additive_component(1, 2)
         True
-        >>> list(Hosh(b"x").decompose(3))[0] == Hosh(b"x").component(0, 3)
+        >>> list(Hosh(b"x").additive_decomposition(3))[0] == Hosh(b"x").additive_component(0, 3)
         True
-        >>> list(Hosh(b"x").decompose(3))[1] == Hosh(b"x").component(1, 3)
+        >>> list(Hosh(b"x").additive_decomposition(3))[1] == Hosh(b"x").additive_component(1, 3)
         True
-        >>> list(Hosh(b"x").decompose(3))[2] == Hosh(b"x").component(2, 3)
+        >>> list(Hosh(b"x").additive_decomposition(3))[2] == Hosh(b"x").additive_component(2, 3)
         True
-        >>> list(Hosh(b"x").decompose(5))[0] == Hosh(b"x").component(0, 5)
+        >>> list(Hosh(b"x").additive_decomposition(5))[0] == Hosh(b"x").additive_component(0, 5)
         True
-        >>> list(Hosh(b"x").decompose(5))[1] == Hosh(b"x").component(1, 5)
+        >>> list(Hosh(b"x").additive_decomposition(5))[1] == Hosh(b"x").additive_component(1, 5)
         True
-        >>> list(Hosh(b"x").decompose(5))[2] == Hosh(b"x").component(2, 5)
+        >>> list(Hosh(b"x").additive_decomposition(5))[2] == Hosh(b"x").additive_component(2, 5)
         True
-        >>> list(Hosh(b"x").decompose(5))[4] == Hosh(b"x").component(4, 5)
+        >>> list(Hosh(b"x").additive_decomposition(5))[4] == Hosh(b"x").additive_component(4, 5)
         True
-        >>> list(Hosh(b"x").decompose(7))[0] == Hosh(b"x").component(0, 7)
+        >>> list(Hosh(b"x").additive_decomposition(7))[0] == Hosh(b"x").additive_component(0, 7)
         True
-        >>> list(Hosh(b"x").decompose(7))[1] == Hosh(b"x").component(1, 7)
+        >>> list(Hosh(b"x").additive_decomposition(7))[1] == Hosh(b"x").additive_component(1, 7)
         True
-        >>> list(Hosh(b"x").decompose(7))[2] == Hosh(b"x").component(2, 7)
+        >>> list(Hosh(b"x").additive_decomposition(7))[2] == Hosh(b"x").additive_component(2, 7)
         True
-        >>> list(Hosh(b"x").decompose(7))[4] == Hosh(b"x").component(4, 7)
+        >>> list(Hosh(b"x").additive_decomposition(7))[4] == Hosh(b"x").additive_component(4, 7)
         True
         """
         den = n * (n + 1) // 2
