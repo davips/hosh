@@ -20,6 +20,7 @@
 #  part of this work is illegal and is unethical regarding the effort and
 #  time spent here.
 
+
 def root(m, k, mod):
     """
     >>> from hosh.misc.math import cellsroot, cellsmul, cellspow
@@ -50,6 +51,7 @@ def root(m, k, mod):
     cells[4] = ((m[4] - c1 * cells[1] * cells[3]) * divk) % mod
     cells[2] = ((m[2] - c1 * cells[3] * cells[0]) * divk) % mod
 
-    cells[5] = ((m[5] - c1 * cells[1] * cells[2] - c1 * cells[4] * cells[0] - c2 * cells[1] * cells[3] *
-                 cells[0]) * divk) % mod
+    cells[5] = (
+        (m[5] - c1 * cells[1] * cells[2] - c1 * cells[4] * cells[0] - c2 * cells[1] * cells[3] * cells[0]) * divk
+    ) % mod
     return cells

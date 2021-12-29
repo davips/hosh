@@ -756,6 +756,8 @@ class Hosh:
         if (index := item.start) is not None:
             if index >= n or index < 0:  # pragma: no cover
                 raise Exception(f"Wrong values: i ({index}) >= n ({n}) (or negative)")
+            if n == 1:
+                return self
             if index < n - 1:
                 return f"{self.id}-{index}".encode() * self
             return ~self.composition_nolast(n) * self
