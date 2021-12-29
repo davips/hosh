@@ -743,7 +743,9 @@ class Hosh:
         xn-1    = id+"-n-1" * x
         xn      = (id+"-1" * x * ... * id+"-n-1")-¹
         >>> a = Hosh(b"a")
-        >>> a[:1] == a
+        >>> a[0:1] == a
+        True
+        >>> a[:1] == [a]
         True
         >>> a[:3][0] * a[:3][1] * a[:3][2] == a
         True
@@ -759,13 +761,13 @@ class Hosh:
             if n == 1:
                 return self
             if index < n - 1:
-                return f"{self.id}-{index}".encode() * self
+                return Hosh(f"{self.id}-{index}".encode())
             return ~self.composition_nolast(n) * self
         if n == 1:
-            return self
+            return [self]
         if n <= 0:  # pragma: no cover
             raise Exception(f"Wrong value: n ({n}) <= 0")
-        lst = [f"{self.id}-{i}".encode() * self for i in range(n - 1)]
+        lst = [Hosh(f"{self.id}-{i}".encode()) for i in range(n - 1)]
         lst.append(~reduce(operator.mul, lst) * self)
         return lst
 
@@ -774,5 +776,6 @@ class Hosh:
             if len(self._composition_nolast) > 5:  # pragma: no cover
                 first = next(iter(self._composition_nolast))
                 del self._composition_nolast[first]
-            self._composition_nolast[n] = reduce(operator.mul, (f"{self.id}-{i}".encode() * self for i in range(n - 1)))
+            gen = (Hosh(f"{self.id}-{i}".encode()) for i in range(n - 1))
+            self._composition_nolast[n] = reduce(operator.mul, gen)
         return self._composition_nolast[n]
