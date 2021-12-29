@@ -771,7 +771,9 @@ class Hosh:
         xn-1    = id+&#34;-n-1&#34; * x
         xn      = (id+&#34;-1&#34; * x * ... * id+&#34;-n-1&#34;)-¹
         &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
-        &gt;&gt;&gt; a[:1] == a
+        &gt;&gt;&gt; a[0:1] == a
+        True
+        &gt;&gt;&gt; a[:1] == [a]
         True
         &gt;&gt;&gt; a[:3][0] * a[:3][1] * a[:3][2] == a
         True
@@ -784,14 +786,16 @@ class Hosh:
         if (index := item.start) is not None:
             if index &gt;= n or index &lt; 0:  # pragma: no cover
                 raise Exception(f&#34;Wrong values: i ({index}) &gt;= n ({n}) (or negative)&#34;)
+            if n == 1:
+                return self
             if index &lt; n - 1:
-                return f&#34;{self.id}-{index}&#34;.encode() * self
+                return Hosh(f&#34;{self.id}-{index}&#34;.encode())
             return ~self.composition_nolast(n) * self
         if n == 1:
-            return self
+            return [self]
         if n &lt;= 0:  # pragma: no cover
             raise Exception(f&#34;Wrong value: n ({n}) &lt;= 0&#34;)
-        lst = [f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)]
+        lst = [Hosh(f&#34;{self.id}-{i}&#34;.encode()) for i in range(n - 1)]
         lst.append(~reduce(operator.mul, lst) * self)
         return lst
 
@@ -800,7 +804,8 @@ class Hosh:
             if len(self._composition_nolast) &gt; 5:  # pragma: no cover
                 first = next(iter(self._composition_nolast))
                 del self._composition_nolast[first]
-            self._composition_nolast[n] = reduce(operator.mul, (f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)))
+            gen = (Hosh(f&#34;{self.id}-{i}&#34;.encode()) for i in range(n - 1))
+            self._composition_nolast[n] = reduce(operator.mul, gen)
         return self._composition_nolast[n]</code></pre>
 </details>
 </section>
@@ -1603,7 +1608,9 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         xn-1    = id+&#34;-n-1&#34; * x
         xn      = (id+&#34;-1&#34; * x * ... * id+&#34;-n-1&#34;)-¹
         &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
-        &gt;&gt;&gt; a[:1] == a
+        &gt;&gt;&gt; a[0:1] == a
+        True
+        &gt;&gt;&gt; a[:1] == [a]
         True
         &gt;&gt;&gt; a[:3][0] * a[:3][1] * a[:3][2] == a
         True
@@ -1616,14 +1623,16 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         if (index := item.start) is not None:
             if index &gt;= n or index &lt; 0:  # pragma: no cover
                 raise Exception(f&#34;Wrong values: i ({index}) &gt;= n ({n}) (or negative)&#34;)
+            if n == 1:
+                return self
             if index &lt; n - 1:
-                return f&#34;{self.id}-{index}&#34;.encode() * self
+                return Hosh(f&#34;{self.id}-{index}&#34;.encode())
             return ~self.composition_nolast(n) * self
         if n == 1:
-            return self
+            return [self]
         if n &lt;= 0:  # pragma: no cover
             raise Exception(f&#34;Wrong value: n ({n}) &lt;= 0&#34;)
-        lst = [f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)]
+        lst = [Hosh(f&#34;{self.id}-{i}&#34;.encode()) for i in range(n - 1)]
         lst.append(~reduce(operator.mul, lst) * self)
         return lst
 
@@ -1632,7 +1641,8 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             if len(self._composition_nolast) &gt; 5:  # pragma: no cover
                 first = next(iter(self._composition_nolast))
                 del self._composition_nolast[first]
-            self._composition_nolast[n] = reduce(operator.mul, (f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)))
+            gen = (Hosh(f&#34;{self.id}-{i}&#34;.encode()) for i in range(n - 1))
+            self._composition_nolast[n] = reduce(operator.mul, gen)
         return self._composition_nolast[n]</code></pre>
 </details>
 <h3>Subclasses</h3>
@@ -2300,7 +2310,8 @@ True
         if len(self._composition_nolast) &gt; 5:  # pragma: no cover
             first = next(iter(self._composition_nolast))
             del self._composition_nolast[first]
-        self._composition_nolast[n] = reduce(operator.mul, (f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)))
+        gen = (Hosh(f&#34;{self.id}-{i}&#34;.encode()) for i in range(n - 1))
+        self._composition_nolast[n] = reduce(operator.mul, gen)
     return self._composition_nolast[n]</code></pre>
 </details>
 </dd>
