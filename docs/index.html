@@ -392,6 +392,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     def __init__(self, content, etype=&#34;default:ordered&#34;, version=UT40_4):
         self.version = version
         self.p, self.p4, self.p6, self.digits, self.bytes, _, _, _, _, _, _ = version
+        self._composition_nolast = {}
         if isinstance(content, list):
             if etype != &#34;default:ordered&#34;:
                 raise DanglingEtype(f&#34;Cannot set etype={etype} when providing cells ({content}).&#34;)
@@ -677,6 +678,11 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     #         self._bits = bin(self.n)[2:].rjust(256, &#34;0&#34;)
     #     return self._bits
 
+    def __xor__(self, other: int):
+        if other == 1:
+            return self
+        return Hosh(cellspow(self.cells, other, self.p), version=self.version)
+
     def __mul__(self, other: Union[&#34;Hosh&#34;, str, bytes, int]):
         return Hosh(cellsmul(self.cells, self.convert(other).cells, self.p), version=self.version)
 
@@ -874,7 +880,45 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             raise WrongVersion(f&#34;Incompatible operands: {self.version} != {other.version}&#34;)
         return other
 
-    def decompose(self, n):
+    def root(self, k):
+        &#34;&#34;&#34;
+        &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
+        &gt;&gt;&gt; for i in range(1, 5):
+        ...     r = a.root(i)
+        ...     r^i == a
+        True
+        True
+        True
+        True
+        &#34;&#34;&#34;
+        if k == 1:
+            return self
+        return Hosh(cellsroot(self.cells, k, self.p))
+
+    def multiplicative_component(self, i, n):
+        &#34;&#34;&#34;Elements within &#39;n&#39; components of &#34;multiplicative&#34; decomposition
+
+        Resulting elements commute among themselves.
+
+        &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
+        &gt;&gt;&gt; a.multiplicative_component(0, 1) == a
+        True
+        &gt;&gt;&gt; a.multiplicative_component(0, 2) * a.multiplicative_component(1, 2) == a
+        True
+        &gt;&gt;&gt; a.multiplicative_component(0, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(2, 3) == a
+        True
+        &gt;&gt;&gt; a.multiplicative_component(2, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(0, 3) == a
+        True
+        &#34;&#34;&#34;
+        if i &gt;= n:  # pragma: no cover
+            raise Exception(f&#34;Hosh component should be defined by &#39;index&#39; ({i}) &lt; &#39;#components&#39; ({n})&#34;)
+        if n == 1:
+            return self
+        exp = n * (n + 1) // 2
+        r = self.root(exp)
+        return r ^ (i + 1)
+
+    def additive_decomposition(self, n):
         &#34;&#34;&#34;
         Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
 
@@ -882,7 +926,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         &gt;&gt;&gt; from functools import reduce
         &gt;&gt;&gt; import operator
-        &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
+        &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).additive_decomposition(5)) == Hosh(b&#34;x&#34;)
         True
         &#34;&#34;&#34;
         den = n * (n + 1) // 2
@@ -896,7 +940,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))
 
-    def component(self, i, n):
+    def additive_component(self, i, n):
         &#34;&#34;&#34;
         Return the &#39;i&#39;-th component of the additive decomposition of current hosh
 
@@ -904,31 +948,31 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
         &gt;&gt;&gt; from functools import reduce
         &gt;&gt;&gt; import operator
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[0] == Hosh(b&#34;x&#34;).component(0, 2)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(2))[0] == Hosh(b&#34;x&#34;).additive_component(0, 2)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[1] == Hosh(b&#34;x&#34;).component(1, 2)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(2))[1] == Hosh(b&#34;x&#34;).additive_component(1, 2)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[0] == Hosh(b&#34;x&#34;).component(0, 3)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[0] == Hosh(b&#34;x&#34;).additive_component(0, 3)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[1] == Hosh(b&#34;x&#34;).component(1, 3)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[1] == Hosh(b&#34;x&#34;).additive_component(1, 3)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[2] == Hosh(b&#34;x&#34;).component(2, 3)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[2] == Hosh(b&#34;x&#34;).additive_component(2, 3)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[0] == Hosh(b&#34;x&#34;).component(0, 5)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[0] == Hosh(b&#34;x&#34;).additive_component(0, 5)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[1] == Hosh(b&#34;x&#34;).component(1, 5)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[1] == Hosh(b&#34;x&#34;).additive_component(1, 5)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[2] == Hosh(b&#34;x&#34;).component(2, 5)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[2] == Hosh(b&#34;x&#34;).additive_component(2, 5)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[4] == Hosh(b&#34;x&#34;).component(4, 5)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[4] == Hosh(b&#34;x&#34;).additive_component(4, 5)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[0] == Hosh(b&#34;x&#34;).component(0, 7)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[0] == Hosh(b&#34;x&#34;).additive_component(0, 7)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[1] == Hosh(b&#34;x&#34;).component(1, 7)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[1] == Hosh(b&#34;x&#34;).additive_component(1, 7)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[2] == Hosh(b&#34;x&#34;).component(2, 7)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[2] == Hosh(b&#34;x&#34;).additive_component(2, 7)
         True
-        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[4] == Hosh(b&#34;x&#34;).component(4, 7)
+        &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[4] == Hosh(b&#34;x&#34;).additive_component(4, 7)
         True
         &#34;&#34;&#34;
         den = n * (n + 1) // 2
@@ -940,7 +984,56 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             parc, rem = divmod(x + p, den)
             return (i * parc + toggle * rem) % p
 
-        return Hosh(list(fac(c) for c in self.cells))</code></pre>
+        return Hosh(list(fac(c) for c in self.cells))
+
+    def __getitem__(self, item):
+        &#34;&#34;&#34;
+        Multiplicative decomposition based on values extracted from id+index
+
+        Syntax:
+            Hosh(b&#34;blob&#34;)[:n]           # Takes all &#39;n&#39; components.
+            Hosh(b&#34;blob&#34;)[index:n]      # Takes a single component out of &#39;n&#39;.
+
+        Use arbitrarily internally defined elements based on current id:
+        id+&#34;-_1&#34;, id+&#34;-2&#34;, ..., id+&#34;-n&#34;
+
+        The last element makes the multiplication x1*x2*...*xn match x:
+        x1      = id+&#34;-1&#34; * x
+         ...
+        xn-1    = id+&#34;-n-1&#34; * x
+        xn      = (id+&#34;-1&#34; * x * ... * id+&#34;-n-1&#34;)-¹
+        &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
+        &gt;&gt;&gt; a[:1] == a
+        True
+        &gt;&gt;&gt; a[:3][0] * a[:3][1] * a[:3][2] == a
+        True
+        &gt;&gt;&gt; a[0:3] * a[1:3] * a[2:3] == a
+        True
+
+        &#34;&#34;&#34;
+        if not isinstance(item, slice) or item.step is not None or (n := item.stop) is None:  # pragma: no cover
+            raise Exception(&#34;Wrong syntax, expected: hosh[:n] or hosh[index:n]&#34;)
+        if (index := item.start) is not None:
+            if index &gt;= n or index &lt; 0:  # pragma: no cover
+                raise Exception(f&#34;Wrong values: i ({index}) &gt;= n ({n}) (or negative)&#34;)
+            if index &lt; n - 1:
+                return f&#34;{self.id}-{index}&#34;.encode() * self
+            return ~self.composition_nolast(n) * self
+        if n == 1:
+            return self
+        if n &lt;= 0:  # pragma: no cover
+            raise Exception(f&#34;Wrong value: n ({n}) &lt;= 0&#34;)
+        lst = [f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)]
+        lst.append(~reduce(operator.mul, lst) * self)
+        return lst
+
+    def composition_nolast(self, n):
+        if n not in self._composition_nolast:
+            if len(self._composition_nolast) &gt; 5:  # pragma: no cover
+                first = next(iter(self._composition_nolast))
+                del self._composition_nolast[first]
+            self._composition_nolast[n] = reduce(operator.mul, (f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)))
+        return self._composition_nolast[n]</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -1469,46 +1562,46 @@ def ø(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="hosh.Hosh.component"><code class="name flex">
-<span>def <span class="ident">component</span></span>(<span>self, i, n)</span>
+<dt id="hosh.Hosh.additive_component"><code class="name flex">
+<span>def <span class="ident">additive_component</span></span>(<span>self, i, n)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return the 'i'-th component of the additive decomposition of current hosh</p>
 <p>Remaining values are adjusted in the last component.</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; from functools import reduce
 &gt;&gt;&gt; import operator
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(2))[0] == Hosh(b&quot;x&quot;).component(0, 2)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(2))[0] == Hosh(b&quot;x&quot;).additive_component(0, 2)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(2))[1] == Hosh(b&quot;x&quot;).component(1, 2)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(2))[1] == Hosh(b&quot;x&quot;).additive_component(1, 2)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[0] == Hosh(b&quot;x&quot;).component(0, 3)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(3))[0] == Hosh(b&quot;x&quot;).additive_component(0, 3)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[1] == Hosh(b&quot;x&quot;).component(1, 3)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(3))[1] == Hosh(b&quot;x&quot;).additive_component(1, 3)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(3))[2] == Hosh(b&quot;x&quot;).component(2, 3)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(3))[2] == Hosh(b&quot;x&quot;).additive_component(2, 3)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[0] == Hosh(b&quot;x&quot;).component(0, 5)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(5))[0] == Hosh(b&quot;x&quot;).additive_component(0, 5)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[1] == Hosh(b&quot;x&quot;).component(1, 5)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(5))[1] == Hosh(b&quot;x&quot;).additive_component(1, 5)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[2] == Hosh(b&quot;x&quot;).component(2, 5)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(5))[2] == Hosh(b&quot;x&quot;).additive_component(2, 5)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(5))[4] == Hosh(b&quot;x&quot;).component(4, 5)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(5))[4] == Hosh(b&quot;x&quot;).additive_component(4, 5)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[0] == Hosh(b&quot;x&quot;).component(0, 7)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(7))[0] == Hosh(b&quot;x&quot;).additive_component(0, 7)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[1] == Hosh(b&quot;x&quot;).component(1, 7)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(7))[1] == Hosh(b&quot;x&quot;).additive_component(1, 7)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[2] == Hosh(b&quot;x&quot;).component(2, 7)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(7))[2] == Hosh(b&quot;x&quot;).additive_component(2, 7)
 True
-&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).decompose(7))[4] == Hosh(b&quot;x&quot;).component(4, 7)
+&gt;&gt;&gt; list(Hosh(b&quot;x&quot;).additive_decomposition(7))[4] == Hosh(b&quot;x&quot;).additive_component(4, 7)
 True
 </code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def component(self, i, n):
+<pre><code class="python">def additive_component(self, i, n):
     &#34;&#34;&#34;
     Return the &#39;i&#39;-th component of the additive decomposition of current hosh
 
@@ -1516,31 +1609,31 @@ True
 
     &gt;&gt;&gt; from functools import reduce
     &gt;&gt;&gt; import operator
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[0] == Hosh(b&#34;x&#34;).component(0, 2)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(2))[0] == Hosh(b&#34;x&#34;).additive_component(0, 2)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(2))[1] == Hosh(b&#34;x&#34;).component(1, 2)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(2))[1] == Hosh(b&#34;x&#34;).additive_component(1, 2)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[0] == Hosh(b&#34;x&#34;).component(0, 3)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[0] == Hosh(b&#34;x&#34;).additive_component(0, 3)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[1] == Hosh(b&#34;x&#34;).component(1, 3)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[1] == Hosh(b&#34;x&#34;).additive_component(1, 3)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(3))[2] == Hosh(b&#34;x&#34;).component(2, 3)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(3))[2] == Hosh(b&#34;x&#34;).additive_component(2, 3)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[0] == Hosh(b&#34;x&#34;).component(0, 5)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[0] == Hosh(b&#34;x&#34;).additive_component(0, 5)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[1] == Hosh(b&#34;x&#34;).component(1, 5)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[1] == Hosh(b&#34;x&#34;).additive_component(1, 5)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[2] == Hosh(b&#34;x&#34;).component(2, 5)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[2] == Hosh(b&#34;x&#34;).additive_component(2, 5)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(5))[4] == Hosh(b&#34;x&#34;).component(4, 5)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(5))[4] == Hosh(b&#34;x&#34;).additive_component(4, 5)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[0] == Hosh(b&#34;x&#34;).component(0, 7)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[0] == Hosh(b&#34;x&#34;).additive_component(0, 7)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[1] == Hosh(b&#34;x&#34;).component(1, 7)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[1] == Hosh(b&#34;x&#34;).additive_component(1, 7)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[2] == Hosh(b&#34;x&#34;).component(2, 7)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[2] == Hosh(b&#34;x&#34;).additive_component(2, 7)
     True
-    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).decompose(7))[4] == Hosh(b&#34;x&#34;).component(4, 7)
+    &gt;&gt;&gt; list(Hosh(b&#34;x&#34;).additive_decomposition(7))[4] == Hosh(b&#34;x&#34;).additive_component(4, 7)
     True
     &#34;&#34;&#34;
     den = n * (n + 1) // 2
@@ -1553,6 +1646,62 @@ True
         return (i * parc + toggle * rem) % p
 
     return Hosh(list(fac(c) for c in self.cells))</code></pre>
+</details>
+</dd>
+<dt id="hosh.Hosh.additive_decomposition"><code class="name flex">
+<span>def <span class="ident">additive_decomposition</span></span>(<span>self, n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the 'n' additive components for 'x' such that 'x = c1+c2+&hellip;+cn'</p>
+<p>Remaining values are adjusted in 'cn'.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from functools import reduce
+&gt;&gt;&gt; import operator
+&gt;&gt;&gt; reduce(operator.add, Hosh(b&quot;x&quot;).additive_decomposition(5)) == Hosh(b&quot;x&quot;)
+True
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def additive_decomposition(self, n):
+    &#34;&#34;&#34;
+    Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+
+    Remaining values are adjusted in &#39;cn&#39;.
+
+    &gt;&gt;&gt; from functools import reduce
+    &gt;&gt;&gt; import operator
+    &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).additive_decomposition(5)) == Hosh(b&#34;x&#34;)
+    True
+    &#34;&#34;&#34;
+    den = n * (n + 1) // 2
+    p = self.p
+
+    def fac(x):
+        parc, rem = divmod(x + p, den)
+        lst = [i * parc for i in range(1, n + 1)]
+        lst[-1] += rem
+        return [l % p for l in lst]
+
+    return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
+</details>
+</dd>
+<dt id="hosh.Hosh.composition_nolast"><code class="name flex">
+<span>def <span class="ident">composition_nolast</span></span>(<span>self, n)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def composition_nolast(self, n):
+    if n not in self._composition_nolast:
+        if len(self._composition_nolast) &gt; 5:  # pragma: no cover
+            first = next(iter(self._composition_nolast))
+            del self._composition_nolast[first]
+        self._composition_nolast[n] = reduce(operator.mul, (f&#34;{self.id}-{i}&#34;.encode() * self for i in range(n - 1)))
+    return self._composition_nolast[n]</code></pre>
 </details>
 </dd>
 <dt id="hosh.Hosh.convert"><code class="name flex">
@@ -1615,42 +1764,81 @@ True
     return other</code></pre>
 </details>
 </dd>
-<dt id="hosh.Hosh.decompose"><code class="name flex">
-<span>def <span class="ident">decompose</span></span>(<span>self, n)</span>
+<dt id="hosh.Hosh.multiplicative_component"><code class="name flex">
+<span>def <span class="ident">multiplicative_component</span></span>(<span>self, i, n)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return the 'n' additive components for 'x' such that 'x = c1+c2+&hellip;+cn'</p>
-<p>Remaining values are adjusted in 'cn'.</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from functools import reduce
-&gt;&gt;&gt; import operator
-&gt;&gt;&gt; reduce(operator.add, Hosh(b&quot;x&quot;).decompose(5)) == Hosh(b&quot;x&quot;)
+<div class="desc"><p>Elements within 'n' components of "multiplicative" decomposition</p>
+<p>Resulting elements commute among themselves.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; a = Hosh(b&quot;a&quot;)
+&gt;&gt;&gt; a.multiplicative_component(0, 1) == a
+True
+&gt;&gt;&gt; a.multiplicative_component(0, 2) * a.multiplicative_component(1, 2) == a
+True
+&gt;&gt;&gt; a.multiplicative_component(0, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(2, 3) == a
+True
+&gt;&gt;&gt; a.multiplicative_component(2, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(0, 3) == a
 True
 </code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def decompose(self, n):
-    &#34;&#34;&#34;
-    Return the &#39;n&#39; additive components for &#39;x&#39; such that &#39;x = c1+c2+...+cn&#39;
+<pre><code class="python">def multiplicative_component(self, i, n):
+    &#34;&#34;&#34;Elements within &#39;n&#39; components of &#34;multiplicative&#34; decomposition
 
-    Remaining values are adjusted in &#39;cn&#39;.
+    Resulting elements commute among themselves.
 
-    &gt;&gt;&gt; from functools import reduce
-    &gt;&gt;&gt; import operator
-    &gt;&gt;&gt; reduce(operator.add, Hosh(b&#34;x&#34;).decompose(5)) == Hosh(b&#34;x&#34;)
+    &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
+    &gt;&gt;&gt; a.multiplicative_component(0, 1) == a
+    True
+    &gt;&gt;&gt; a.multiplicative_component(0, 2) * a.multiplicative_component(1, 2) == a
+    True
+    &gt;&gt;&gt; a.multiplicative_component(0, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(2, 3) == a
+    True
+    &gt;&gt;&gt; a.multiplicative_component(2, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(0, 3) == a
     True
     &#34;&#34;&#34;
-    den = n * (n + 1) // 2
-    p = self.p
-
-    def fac(x):
-        parc, rem = divmod(x + p, den)
-        lst = [i * parc for i in range(1, n + 1)]
-        lst[-1] += rem
-        return [l % p for l in lst]
-
-    return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))</code></pre>
+    if i &gt;= n:  # pragma: no cover
+        raise Exception(f&#34;Hosh component should be defined by &#39;index&#39; ({i}) &lt; &#39;#components&#39; ({n})&#34;)
+    if n == 1:
+        return self
+    exp = n * (n + 1) // 2
+    r = self.root(exp)
+    return r ^ (i + 1)</code></pre>
+</details>
+</dd>
+<dt id="hosh.Hosh.root"><code class="name flex">
+<span>def <span class="ident">root</span></span>(<span>self, k)</span>
+</code></dt>
+<dd>
+<div class="desc"><pre><code class="language-python-repl">&gt;&gt;&gt; a = Hosh(b&quot;a&quot;)
+&gt;&gt;&gt; for i in range(1, 5):
+...     r = a.root(i)
+...     r^i == a
+True
+True
+True
+True
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def root(self, k):
+    &#34;&#34;&#34;
+    &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
+    &gt;&gt;&gt; for i in range(1, 5):
+    ...     r = a.root(i)
+    ...     r^i == a
+    True
+    True
+    True
+    True
+    &#34;&#34;&#34;
+    if k == 1:
+        return self
+    return Hosh(cellsroot(self.cells, k, self.p))</code></pre>
 </details>
 </dd>
 <dt id="hosh.Hosh.short"><code class="name flex">
@@ -1733,11 +1921,12 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <ul>
 <li>
 <h4><code><a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a></code></h4>
-<ul class="two-column">
+<ul class="">
+<li><code><a title="hosh.Hosh.additive_component" href="#hosh.Hosh.additive_component">additive_component</a></code></li>
+<li><code><a title="hosh.Hosh.additive_decomposition" href="#hosh.Hosh.additive_decomposition">additive_decomposition</a></code></li>
 <li><code><a title="hosh.Hosh.ansi" href="#hosh.Hosh.ansi">ansi</a></code></li>
-<li><code><a title="hosh.Hosh.component" href="#hosh.Hosh.component">component</a></code></li>
+<li><code><a title="hosh.Hosh.composition_nolast" href="#hosh.Hosh.composition_nolast">composition_nolast</a></code></li>
 <li><code><a title="hosh.Hosh.convert" href="#hosh.Hosh.convert">convert</a></code></li>
-<li><code><a title="hosh.Hosh.decompose" href="#hosh.Hosh.decompose">decompose</a></code></li>
 <li><code><a title="hosh.Hosh.etype" href="#hosh.Hosh.etype">etype</a></code></li>
 <li><code><a title="hosh.Hosh.etype_inducer" href="#hosh.Hosh.etype_inducer">etype_inducer</a></code></li>
 <li><code><a title="hosh.Hosh.fromid" href="#hosh.Hosh.fromid">fromid</a></code></li>
@@ -1745,8 +1934,10 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <li><code><a title="hosh.Hosh.html" href="#hosh.Hosh.html">html</a></code></li>
 <li><code><a title="hosh.Hosh.id" href="#hosh.Hosh.id">id</a></code></li>
 <li><code><a title="hosh.Hosh.idc" href="#hosh.Hosh.idc">idc</a></code></li>
+<li><code><a title="hosh.Hosh.multiplicative_component" href="#hosh.Hosh.multiplicative_component">multiplicative_component</a></code></li>
 <li><code><a title="hosh.Hosh.n" href="#hosh.Hosh.n">n</a></code></li>
 <li><code><a title="hosh.Hosh.rgb" href="#hosh.Hosh.rgb">rgb</a></code></li>
+<li><code><a title="hosh.Hosh.root" href="#hosh.Hosh.root">root</a></code></li>
 <li><code><a title="hosh.Hosh.short" href="#hosh.Hosh.short">short</a></code></li>
 <li><code><a title="hosh.Hosh.shorter" href="#hosh.Hosh.shorter">shorter</a></code></li>
 <li><code><a title="hosh.Hosh.show" href="#hosh.Hosh.show">show</a></code></li>

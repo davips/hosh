@@ -728,20 +728,20 @@ class Hosh:
 
     def __getitem__(self, item):
         """
-        Multiplicative decomposition based on rho* values
+        Multiplicative decomposition based on values extracted from id+index
 
         Syntax:
             Hosh(b"blob")[:n]           # Takes all 'n' components.
             Hosh(b"blob")[index:n]      # Takes a single component out of 'n'.
 
-        Use arbitrarily internally defined rho elements:
-        b"<rho_1>", b"<rho_2>", ..., b"<rho_n>"
+        Use arbitrarily internally defined elements based on current id:
+        id+"-_1", id+"-2", ..., id+"-n"
 
         The last element makes the multiplication x1*x2*...*xn match x:
-        x1      = b"<rho_1>" * x
+        x1      = id+"-1" * x
          ...
-        xn-1    = b"<rho_n-1>" * x
-        xn      = (b"<rho_1>" * x * ... * b"<rho_n-1>")-¹
+        xn-1    = id+"-n-1" * x
+        xn      = (id+"-1" * x * ... * id+"-n-1")-¹
         >>> a = Hosh(b"a")
         >>> a[:1] == a
         True
@@ -757,13 +757,13 @@ class Hosh:
             if index >= n or index < 0:  # pragma: no cover
                 raise Exception(f"Wrong values: i ({index}) >= n ({n}) (or negative)")
             if index < n - 1:
-                return f"<rho_{index}>".encode() * self
+                return f"{self.id}-{index}".encode() * self
             return ~self.composition_nolast(n) * self
         if n == 1:
             return self
         if n <= 0:  # pragma: no cover
             raise Exception(f"Wrong value: n ({n}) <= 0")
-        lst = [f"<rho_{i}>".encode() * self for i in range(n - 1)]
+        lst = [f"{self.id}-{i}".encode() * self for i in range(n - 1)]
         lst.append(~reduce(operator.mul, lst) * self)
         return lst
 
@@ -772,5 +772,5 @@ class Hosh:
             if len(self._composition_nolast) > 5:  # pragma: no cover
                 first = next(iter(self._composition_nolast))
                 del self._composition_nolast[first]
-            self._composition_nolast[n] = reduce(operator.mul, (f"<rho_{i}>".encode() * self for i in range(n - 1)))
+            self._composition_nolast[n] = reduce(operator.mul, (f"{self.id}-{i}".encode() * self for i in range(n - 1)))
         return self._composition_nolast[n]

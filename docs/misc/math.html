@@ -52,6 +52,9 @@
 &#34;&#34;&#34;
 Pure Python linear algebra module
 &#34;&#34;&#34;
+from hosh.misc.root import root
+
+cellsroot = root
 
 
 def int2cells(num, mod):
@@ -188,7 +191,14 @@ def cellsinv(m, mod):
         -m[3] % mod,
         (m[1] * m[3] - m[4]) % mod,
         (m[1] * m[2] + m[4] * m[0] - m[1] * m[3] * m[0] - m[5]) % mod,
-    ]</code></pre>
+    ]
+
+
+def cellspow(m, k, mod):
+    result_cells = [0, 0, 0, 0, 0, 0]
+    for i in range(0, k):
+        result_cells = cellsmul(result_cells, m, mod)
+    return result_cells</code></pre>
 </details>
 </section>
 <section>
@@ -399,6 +409,22 @@ True
     ]</code></pre>
 </details>
 </dd>
+<dt id="hosh.misc.math.cellspow"><code class="name flex">
+<span>def <span class="ident">cellspow</span></span>(<span>m, k, mod)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cellspow(m, k, mod):
+    result_cells = [0, 0, 0, 0, 0, 0]
+    for i in range(0, k):
+        result_cells = cellsmul(result_cells, m, mod)
+    return result_cells</code></pre>
+</details>
+</dd>
 <dt id="hosh.misc.math.int2cells"><code class="name flex">
 <span>def <span class="ident">int2cells</span></span>(<span>num, mod)</span>
 </code></dt>
@@ -480,6 +506,7 @@ Number -1 too large for given mod 10
 <li><code><a title="hosh.misc.math.cells2int" href="#hosh.misc.math.cells2int">cells2int</a></code></li>
 <li><code><a title="hosh.misc.math.cellsinv" href="#hosh.misc.math.cellsinv">cellsinv</a></code></li>
 <li><code><a title="hosh.misc.math.cellsmul" href="#hosh.misc.math.cellsmul">cellsmul</a></code></li>
+<li><code><a title="hosh.misc.math.cellspow" href="#hosh.misc.math.cellspow">cellspow</a></code></li>
 <li><code><a title="hosh.misc.math.int2cells" href="#hosh.misc.math.int2cells">int2cells</a></code></li>
 </ul>
 </li>
