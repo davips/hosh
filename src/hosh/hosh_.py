@@ -424,7 +424,9 @@ class Hosh:
         return Hosh(cellspow(self.cells, other, self.p), version=self.version)
 
     def __mul__(self, other: Union["Hosh", str, bytes, int]):
-        return Hosh(cellsmul(self.cells, self.convert(other).cells, self.p), version=self.version)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return Hosh(cellsmul(self.cells, other.cells, self.p), version=self.version)
 
     def __rmul__(self, other: Union["Hosh", str, bytes, int]):
         """
@@ -440,7 +442,9 @@ class Hosh:
         -------
 
         """
-        return Hosh(cellsmul(self.convert(other).cells, self.cells, self.p), version=self.version)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return Hosh(cellsmul(other.cells, self.cells, self.p), version=self.version)
 
     def __rpow__(self, other):
         """
@@ -456,10 +460,14 @@ class Hosh:
         -------
 
         """
-        return +(+self.convert(other) * +self)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return +(+other * +self)
 
     def __pow__(self, power, modulo=None):
-        return +(+self * +self.convert(power))
+        if (power := self.convert(power)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return +(+self * +power)
 
     def __rfloordiv__(self, other):
         """
@@ -475,11 +483,15 @@ class Hosh:
         -------
 
         """
-        return +(+self.convert(other) / +self)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return +(+other / +self)
 
     def __floordiv__(self, other):
         """Lift"""
-        return +(+self / +self.convert(other))
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return +(+self / +other)
 
     def __neg__(self):
         """Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
@@ -537,19 +549,27 @@ class Hosh:
         -------
 
         """
-        return Hosh(cellsmul(self.convert(other).cells, cellsinv(self.cells, self.p), self.p), version=self.version)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return Hosh(cellsmul(other.cells, cellsinv(self.cells, self.p), self.p), version=self.version)
 
     def __truediv__(self, other):
-        return Hosh(cellsmul(self.cells, cellsinv(self.convert(other).cells, self.p), self.p), version=self.version)
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return Hosh(cellsmul(self.cells, cellsinv(other.cells, self.p), self.p), version=self.version)
 
     def __add__(self, other):
         """Matrix addition modulo p, keeping unidiagonal"""
-        cells = list(map(lambda x, y: (x + y) % self.p, self.cells, self.convert(other).cells))
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
     def __sub__(self, other):
         """Matrix subtraction modulo p, keeping unidiagonal"""
-        cells = list(map(lambda x, y: (x - y) % self.p, self.cells, self.convert(other).cells))
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        cells = list(map(lambda x, y: (x - y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
         # REMINDER: the chosen implementation differs from the alternative bellow!
         # return Hosh.fromn((self.n + self.convert(other).n) % self.order, self.version)
@@ -558,10 +578,14 @@ class Hosh:
         return self.sid if Hosh.shorter else self.id
 
     def __eq__(self, other):
-        return self.n == self.convert(other).n
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return self.n == other.n
 
     def __ne__(self, other):
-        return self.n != self.convert(other).n
+        if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
+            return NotImplemented
+        return self.n != other.n
 
     def show(self, colored=True):
         """
@@ -613,9 +637,7 @@ class Hosh:
         elif isinstance(other, list):
             other = Hosh(other, version=self.version)
         elif not isinstance(other, Hosh):
-            raise WrongOperands(
-                id(self.__class__), id(other.__class__), f"Cannot convert {type(other)} to {type(self)}."
-            )
+            return NotImplemented
         if self.version != other.version:
             raise WrongVersion(f"Incompatible operands: {self.version} != {other.version}")
         return other

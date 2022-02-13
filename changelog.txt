@@ -1,4 +1,1 @@
-Change ['rho'+idx * hosh] to [id+idx]
-Add pow^ and root for hoshes
-Add an attempt of multiplicative decomposition (unfortunately, components commute)
-Adopt better decomposition
+Fix rmul,etc which was taking precedence over mul,etc of other types

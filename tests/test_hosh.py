@@ -55,8 +55,7 @@ class TestLdict(TestCase):
             ø.convert(i64)
         with pytest.raises(WrongVersion):
             Hosh(b"1234").convert(i64)
-        with pytest.raises(WrongOperands):
-            Hosh(b"1234").convert({})
+        self.assertEqual(Hosh(b"1234").convert({}), NotImplemented)
         with pytest.raises(WrongIdentifier):
             Hosh.fromid("a")
 
