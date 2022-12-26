@@ -48,7 +48,40 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
-&#34;&#34;&#34;Support modules are hidden here to avoid polluting the API&#34;&#34;&#34;</code></pre>
+&#34;&#34;&#34;Support modules are hidden here to avoid polluting the API&#34;&#34;&#34;
+
+
+def hoshes(iterable):
+    &#34;&#34;&#34;
+    Iterator mapping a list of objects to their hoshes.
+
+    &gt;&gt;&gt; from collections import OrderedDict as D
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; def f(o):
+    ...     o.hosh = Hosh(o[&#34;a&#34;].encode())
+    ...     return o
+    &gt;&gt;&gt; lst = map(f, [D(a=&#34;a&#34;), D(a=&#34;b&#34;), D(a=&#34;c&#34;)])
+    &gt;&gt;&gt; [h.id for h in hoshes(lst)]
+    [&#39;cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4&#39;, &#39;9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao&#39;, &#39;SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n&#39;]
+    &#34;&#34;&#34;
+    from operator import attrgetter
+    return map(attrgetter(&#34;hosh&#34;), iterable)
+
+def ids(iterable):
+    &#34;&#34;&#34;
+    Iterator mapping a list of objects to their hosh ids.
+
+    &gt;&gt;&gt; from collections import OrderedDict as D
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; def f(o):
+    ...     o.hosh = Hosh(o[&#34;a&#34;].encode())
+    ...     return o
+    &gt;&gt;&gt; lst = map(f, [D(a=&#34;a&#34;), D(a=&#34;b&#34;), D(a=&#34;c&#34;)])
+    &gt;&gt;&gt; [h for h in ids(lst)]
+    [&#39;cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4&#39;, &#39;9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao&#39;, &#39;SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n&#39;]
+    &#34;&#34;&#34;
+    from operator import attrgetter
+    return map(attrgetter(&#34;hosh.id&#34;), iterable)</code></pre>
 </details>
 </section>
 <section>
@@ -91,6 +124,79 @@
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hosh.misc.hoshes"><code class="name flex">
+<span>def <span class="ident">hoshes</span></span>(<span>iterable)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterator mapping a list of objects to their hoshes.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from collections import OrderedDict as D
+&gt;&gt;&gt; from hosh import Hosh
+&gt;&gt;&gt; def f(o):
+...     o.hosh = Hosh(o[&quot;a&quot;].encode())
+...     return o
+&gt;&gt;&gt; lst = map(f, [D(a=&quot;a&quot;), D(a=&quot;b&quot;), D(a=&quot;c&quot;)])
+&gt;&gt;&gt; [h.id for h in hoshes(lst)]
+['cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4', '9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao', 'SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n']
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hoshes(iterable):
+    &#34;&#34;&#34;
+    Iterator mapping a list of objects to their hoshes.
+
+    &gt;&gt;&gt; from collections import OrderedDict as D
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; def f(o):
+    ...     o.hosh = Hosh(o[&#34;a&#34;].encode())
+    ...     return o
+    &gt;&gt;&gt; lst = map(f, [D(a=&#34;a&#34;), D(a=&#34;b&#34;), D(a=&#34;c&#34;)])
+    &gt;&gt;&gt; [h.id for h in hoshes(lst)]
+    [&#39;cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4&#39;, &#39;9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao&#39;, &#39;SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n&#39;]
+    &#34;&#34;&#34;
+    from operator import attrgetter
+    return map(attrgetter(&#34;hosh&#34;), iterable)</code></pre>
+</details>
+</dd>
+<dt id="hosh.misc.ids"><code class="name flex">
+<span>def <span class="ident">ids</span></span>(<span>iterable)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterator mapping a list of objects to their hosh ids.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from collections import OrderedDict as D
+&gt;&gt;&gt; from hosh import Hosh
+&gt;&gt;&gt; def f(o):
+...     o.hosh = Hosh(o[&quot;a&quot;].encode())
+...     return o
+&gt;&gt;&gt; lst = map(f, [D(a=&quot;a&quot;), D(a=&quot;b&quot;), D(a=&quot;c&quot;)])
+&gt;&gt;&gt; [h for h in ids(lst)]
+['cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4', '9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao', 'SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n']
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ids(iterable):
+    &#34;&#34;&#34;
+    Iterator mapping a list of objects to their hosh ids.
+
+    &gt;&gt;&gt; from collections import OrderedDict as D
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; def f(o):
+    ...     o.hosh = Hosh(o[&#34;a&#34;].encode())
+    ...     return o
+    &gt;&gt;&gt; lst = map(f, [D(a=&#34;a&#34;), D(a=&#34;b&#34;), D(a=&#34;c&#34;)])
+    &gt;&gt;&gt; [h for h in ids(lst)]
+    [&#39;cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4&#39;, &#39;9a.VuUhND-A6QgCpIs7lAAkQnQuXwplmiw8308ao&#39;, &#39;SRbk-ZIvvxEJtxP6dHbZP-gQeBGTGCWI8-d3WK3n&#39;]
+    &#34;&#34;&#34;
+    from operator import attrgetter
+    return map(attrgetter(&#34;hosh.id&#34;), iterable)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -116,6 +222,12 @@
 <li><code><a title="hosh.misc.identity" href="identity.html">hosh.misc.identity</a></code></li>
 <li><code><a title="hosh.misc.math" href="math.html">hosh.misc.math</a></code></li>
 <li><code><a title="hosh.misc.root" href="root.html">hosh.misc.root</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hosh.misc.hoshes" href="#hosh.misc.hoshes">hoshes</a></code></li>
+<li><code><a title="hosh.misc.ids" href="#hosh.misc.ids">ids</a></code></li>
 </ul>
 </li>
 </ul>
