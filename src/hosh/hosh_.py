@@ -128,6 +128,7 @@ class Hosh:
     _repr = None
     _n, _id, _ansi, _sid, _sidc, _etype, _rgb = None, None, None, None, None, None, None
     _etype_inducer, _bits, _ø = None, None, None
+    _rev = None
 
     def __init__(self, content, etype="default:ordered", version=UT40_4):
         self.version = version
@@ -173,6 +174,23 @@ class Hosh:
 
             self._ø = Identity(version=self.version, etype_inducer=self.etype)
         return self._ø
+
+    @property
+    def rev(self):
+        """Element with the reversed indentifier
+
+        Usage:
+
+        >>> from hosh import Hosh
+        >>> h = Hosh.fromid("J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj").rev
+        >>> h.id
+        'jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J'
+        >>> "".join(reversed(h.id))
+        'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
+        """
+        if self._rev is None:
+            self._rev = Hosh.fromid("".join(reversed(self.id)))
+        return self._rev
 
     @property
     def etype(self):
