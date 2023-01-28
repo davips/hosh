@@ -156,6 +156,7 @@ class Hosh:
     _repr = None
     _n, _id, _ansi, _sid, _sidc, _etype, _rgb = None, None, None, None, None, None, None
     _etype_inducer, _bits, _ø = None, None, None
+    _rev = None
 
     def __init__(self, content, etype=&#34;default:ordered&#34;, version=UT40_4):
         self.version = version
@@ -201,6 +202,23 @@ class Hosh:
 
             self._ø = Identity(version=self.version, etype_inducer=self.etype)
         return self._ø
+
+    @property
+    def rev(self):
+        &#34;&#34;&#34;Element with the reversed indentifier
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#34;).rev
+        &gt;&gt;&gt; h.id
+        &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
+        &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
+        &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+        &#34;&#34;&#34;
+        if self._rev is None:
+            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+        return self._rev
 
     @property
     def etype(self):
@@ -1015,6 +1033,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     _repr = None
     _n, _id, _ansi, _sid, _sidc, _etype, _rgb = None, None, None, None, None, None, None
     _etype_inducer, _bits, _ø = None, None, None
+    _rev = None
 
     def __init__(self, content, etype=&#34;default:ordered&#34;, version=UT40_4):
         self.version = version
@@ -1060,6 +1079,23 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 
             self._ø = Identity(version=self.version, etype_inducer=self.etype)
         return self._ø
+
+    @property
+    def rev(self):
+        &#34;&#34;&#34;Element with the reversed indentifier
+
+        Usage:
+
+        &gt;&gt;&gt; from hosh import Hosh
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#34;).rev
+        &gt;&gt;&gt; h.id
+        &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
+        &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
+        &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+        &#34;&#34;&#34;
+        if self._rev is None:
+            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+        return self._rev
 
     @property
     def etype(self):
@@ -2065,6 +2101,39 @@ def n(self):
     return self._n</code></pre>
 </details>
 </dd>
+<dt id="hosh.hosh_.Hosh.rev"><code class="name">var <span class="ident">rev</span></code></dt>
+<dd>
+<div class="desc"><p>Element with the reversed indentifier</p>
+<p>Usage:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import Hosh
+&gt;&gt;&gt; h = Hosh.fromid(&quot;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&quot;).rev
+&gt;&gt;&gt; h.id
+'jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J'
+&gt;&gt;&gt; &quot;&quot;.join(reversed(h.id))
+'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def rev(self):
+    &#34;&#34;&#34;Element with the reversed indentifier
+
+    Usage:
+
+    &gt;&gt;&gt; from hosh import Hosh
+    &gt;&gt;&gt; h = Hosh.fromid(&#34;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#34;).rev
+    &gt;&gt;&gt; h.id
+    &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
+    &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
+    &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+    &#34;&#34;&#34;
+    if self._rev is None:
+        self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+    return self._rev</code></pre>
+</details>
+</dd>
 <dt id="hosh.hosh_.Hosh.rgb"><code class="name">var <span class="ident">rgb</span></code></dt>
 <dd>
 <div class="desc"><p>Colored textual (RGB) representation of this element</p>
@@ -2573,6 +2642,7 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <li><code><a title="hosh.hosh_.Hosh.idc" href="#hosh.hosh_.Hosh.idc">idc</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.multiplicative_component" href="#hosh.hosh_.Hosh.multiplicative_component">multiplicative_component</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.n" href="#hosh.hosh_.Hosh.n">n</a></code></li>
+<li><code><a title="hosh.hosh_.Hosh.rev" href="#hosh.hosh_.Hosh.rev">rev</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.rgb" href="#hosh.hosh_.Hosh.rgb">rgb</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.root" href="#hosh.hosh_.Hosh.root">root</a></code></li>
 <li><code><a title="hosh.hosh_.Hosh.short" href="#hosh.hosh_.Hosh.short">short</a></code></li>
