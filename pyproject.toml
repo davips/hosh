@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hosh"
-version = "1.211228.4"
+version = "1.211228.5"
 description = "Predictable Operable HaSH-based identifiers"
 authors = ["davips <dpsabc@gmail.com>"]
 license = "GPL"

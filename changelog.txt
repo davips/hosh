@@ -1,1 +1,1 @@
-Add reverse id
+Minor change to README
