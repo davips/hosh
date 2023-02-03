@@ -1,1 +1,1 @@
-Remove HTML header from colored HTML id output
+Fix color theme to reflect changes in GLOBAL setting

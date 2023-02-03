@@ -24,6 +24,7 @@ from functools import reduce
 from sys import maxsize
 from typing import Union
 
+from hosh.config import GLOBAL
 from hosh.groups import UT40_4, groups
 from hosh.misc.colors import ansi2html, id2ansi, id2rgb
 from hosh.misc.core import cells_id_fromblob, cells_fromid, id_fromcells
@@ -126,7 +127,9 @@ class Hosh:
 
     shorter = False
     _repr = None
-    _n, _id, _ansi, _sid, _sidc, _etype, _rgb = None, None, None, None, None, None, None
+    _n, _id, _ansi_light, _ansi_dark = None, None, None, None
+    _sidc_light, _sidc_dark, _sid, _etype, _rgb_light, _rgb_dark = None, None, None, None, None, None
+
     _etype_inducer, _bits, _ø = None, None, None
     _rev = None
 
@@ -374,9 +377,9 @@ class Hosh:
         -------
         Textual representation
         """
-        if self._ansi is None:
-            self._ansi = id2ansi(self.id)
-        return self._ansi
+        if self._ansi_light is None:
+            self._ansi_light, self._ansi_dark = id2ansi(self.id)
+        return self._ansi_dark if GLOBAL["dark_theme"] else self._ansi_light
 
     @property
     def idc(self):
@@ -391,9 +394,9 @@ class Hosh:
         >>> Hosh.fromid("Iaz3L67a2BQv0GifoWOjWale6LYFTGmJJ1ZPfdoP").rgb
         [[6, 28, 104], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187], [255, 255, 127], [255, 206, 98], [242, 176, 123], [212, 201, 138], [237, 216, 120], [252, 198, 115], [234, 193, 174], [229, 253, 204], [255, 255, 184], [255, 255, 141], [255, 220, 155], [255, 233, 172], [255, 250, 139], [255, 218, 144], [254, 223, 150], [255, 229, 187]]
         """
-        if self._rgb is None:
-            self._rgb = id2rgb(self.id)
-        return self._rgb
+        if self._rgb_light is None:
+            self._rgb_light, self._rgb_dark = id2rgb(self.id)
+        return self._rgb_dark if GLOBAL["dark_theme"] else self._rgb_light
 
     @property
     def html(self):
@@ -421,9 +424,9 @@ class Hosh:
         -------
         Short utf-8 colored textual representation
         """
-        if self._sidc is None:
-            self._sidc = id2ansi(self.sid)
-        return self._sidc
+        if self._sidc_light is None:
+            self._sidc_light, self._sidc_dark = id2ansi(self.sid)
+        return self._sidc_dark if GLOBAL["dark_theme"] else self._sidc_light
 
     def __repr__(self):
         if self._repr is None:

@@ -29,7 +29,7 @@ from colored import stylize
 from hosh.config import GLOBAL
 
 
-def paint(txt, fgr, fgg, fgb):
+def paint(txt, fgr, fgg, fgb, dark):
     """
     >>> from hosh import setup, ø
     >>> ø * b"asd"
@@ -38,10 +38,7 @@ def paint(txt, fgr, fgg, fgb):
     >>> ø * b"asd"
     \x1b[38;5;2m\x1b[1m\x1b[48;5;15mL\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15ms\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15mx\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mC\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15ma\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mj\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15ml\x1b[0m\x1b[38;5;28m\x1b[1m\x1b[48;5;15mK\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15m8\x1b[0m\x1b[38;5;64m\x1b[1m\x1b[48;5;15m3\x1b[0m\x1b[38;5;70m\x1b[1m\x1b[48;5;15m0\x1b[0m\x1b[38;5;64m\x1b[1m\x1b[48;5;15mA\x1b[0m\x1b[38;5;23m\x1b[1m\x1b[48;5;15mK\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mq\x1b[0m\x1b[38;5;70m\x1b[1m\x1b[48;5;15mt\x1b[0m\x1b[38;5;58m\x1b[1m\x1b[48;5;15mU\x1b[0m\x1b[38;5;2m\x1b[1m\x1b[48;5;15m5\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mv\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15m0\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mC\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15m9\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mY\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15mV\x1b[0m\x1b[38;5;28m\x1b[1m\x1b[48;5;15m9\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mb\x1b[0m\x1b[38;5;64m\x1b[1m\x1b[48;5;15mQ\x1b[0m\x1b[38;5;70m\x1b[1m\x1b[48;5;15mn\x1b[0m\x1b[38;5;64m\x1b[1m\x1b[48;5;15mZ\x1b[0m\x1b[38;5;23m\x1b[1m\x1b[48;5;15mJ\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15m1\x1b[0m\x1b[38;5;70m\x1b[1m\x1b[48;5;15mw\x1b[0m\x1b[38;5;58m\x1b[1m\x1b[48;5;15mG\x1b[0m\x1b[38;5;2m\x1b[1m\x1b[48;5;15m3\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15mq\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15ms\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15ml\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15mW\x1b[0m\x1b[38;5;34m\x1b[1m\x1b[48;5;15m9\x1b[0m\x1b[38;5;22m\x1b[1m\x1b[48;5;15mZ\x1b[0m\x1b[38;5;28m\x1b[1m\x1b[48;5;15m6\x1b[0m
     """
-    if GLOBAL["dark_theme"]:
-        bgcolor = colored.bg("#000000")
-    else:
-        bgcolor = colored.bg("#FFFFFF")
+    bgcolor = colored.bg("#000000") if dark else colored.bg("#FFFFFF")
     fgcolor = f"#{hex(fgr)[2:].rjust(2, '0')}{hex(fgg)[2:].rjust(2, '0')}{hex(fgb)[2:].rjust(2, '0')}"
     return stylize(txt, colored.fg(fgcolor) + colored.attr("bold") + bgcolor)
 
@@ -51,44 +48,47 @@ def lim(x):
 
 
 def id2ansi(id, ampl=0.8, change=0.44):
-    rgbs = id2rgb(id, ampl, change)[1:]
-    strs = [paint(l, *rgb) for l, rgb in zip(id, rgbs)]
-    return "".join(strs)
+    xl, xd = id2rgb(id, ampl, change)
+    rgb_light, rgb_dark = xl[1:], xd[1:]
+    str_light = [paint(l, *rgb, dark=False) for l, rgb in zip(id, rgb_light)]
+    str_dark = [paint(l, *rgb, dark=True) for l, rgb in zip(id, rgb_dark)]
+    return "".join(str_light), "".join(str_dark)
 
 
-def id2rgb(id, ampl=0.8, change=0.44, dark=None):
-    if dark is None:
-        dark = GLOBAL["dark_theme"]
+def id2rgb(id, ampl=0.8, change=0.44):
     digits = len(id)
     numbers = md5(id.encode()).digest()
     margin = 64
     fgr = margin + numbers[1] * ampl
     fgg = margin + numbers[2] * ampl
     fgb = margin + numbers[3] * ampl
-    out = []
     nnn = numbers * (digits * 3 // 2)
-    bgr, bgg, bgb = 0, 0, 0
-    for dr, dg, db, _ in zip(nnn, nnn[1:], nnn[2:], id):
-        r = max(margin, lim(fgr + change * (dr - 128)))
-        g = max(margin, lim(fgg + change * (dg - 128)))
-        b = max(margin, lim(fgb + change * (db - 128)))
-        if not dark:
-            r = r - 130
-            g = g - 130
-            b = b - 130
-            if r < 0 or g < 0 or b < 0:
-                worst = min([r, g, b])
-                r -= worst
-                g -= worst
-                b -= worst
-        out.append([int(r), int(g), int(b)])
-        bgr += r
-        bgg += g
-        bgb += b
-    bgr = int(255 - bgr / digits)
-    bgg = int(255 - bgg / digits)
-    bgb = int(255 - bgb / digits)
-    return [[bgr, bgg, bgb]] + out
+    res = []
+    for dark in [False, True]:
+        out = []
+        bgr, bgg, bgb = 0, 0, 0
+        for dr, dg, db, _ in zip(nnn, nnn[1:], nnn[2:], id):
+            r = max(margin, lim(fgr + change * (dr - 128)))
+            g = max(margin, lim(fgg + change * (dg - 128)))
+            b = max(margin, lim(fgb + change * (db - 128)))
+            if not dark:
+                r = r - 130
+                g = g - 130
+                b = b - 130
+                if r < 0 or g < 0 or b < 0:
+                    worst = min([r, g, b])
+                    r -= worst
+                    g -= worst
+                    b -= worst
+            out.append([int(r), int(g), int(b)])
+            bgr += r
+            bgg += g
+            bgb += b
+        bgr = int(255 - bgr / digits)
+        bgg = int(255 - bgg / digits)
+        bgb = int(255 - bgb / digits)
+        res.append([[bgr, bgg, bgb]] + out)
+    return res
 
 
 def ansi2html(ansi, **kwargs):
