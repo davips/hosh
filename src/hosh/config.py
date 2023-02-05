@@ -19,13 +19,14 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and is unethical regarding the effort and
 #  time spent here.
+from typing import Union
 
 from hosh._internals_appearance import ANSI, BW, HTML
 
 GLOBAL = {"dark_theme": True, "format": ANSI(), "short": False}
 
 
-def setup(dark_theme: bool = None, format: BW | ANSI | HTML = None, short: bool = None):
+def setup(dark_theme: bool = None, format: Union[BW, ANSI, HTML] = None, short: bool = None):
     """
     Change global settings
 

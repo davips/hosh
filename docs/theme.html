@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>hosh.misc.exception API documentation</title>
-<meta name="description" content="Exceptions create in this package …" />
+<title>hosh.theme API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,69 +19,39 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>hosh.misc.exception</code></h1>
+<h1 class="title">Module <code>hosh.theme</code></h1>
 </header>
 <section id="section-intro">
-<p>Exceptions create in this package.</p>
-<p>They help writing complete tests.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#  Copyright (c) 2021. Davi Pereira dos Santos
-#  This file is part of the hosh project.
+<pre><code class="python">#  Copyright (c) 2023. Davi Pereira dos Santos
+#  This file is part of the hdict project.
 #  Please respect the license - more about this in the section (*) below.
 #
-#  hosh is free software: you can redistribute it and/or modify
+#  hdict is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  hosh is distributed in the hope that it will be useful,
+#  hdict is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with hosh.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+#  along with hdict.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 #
 #  (*) Removing authorship by any means, e.g. by distribution of derived
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
-#  part of this work is illegal and unethical regarding the effort and
+#  part of this work is illegal and it is unethical regarding the effort and
 #  time spent here.
-&#34;&#34;&#34;Exceptions create in this package.
+#
+#
+from hosh._internals_appearance import ANSI, HTML, BW
 
-They help writing complete tests.&#34;&#34;&#34;
-
-
-class CellValueTooHigh(Exception):
-    pass
-
-
-class DanglingEtype(Exception):
-    pass
-
-
-class WrongContent(Exception):
-    pass
-
-
-class WrongVersion(Exception):
-    pass
-
-
-
-
-class ElementTooHigh(Exception):
-    pass
-
-
-class WrongIdentifier(Exception):
-    pass
-
-
-class WrongEType(Exception):
-    pass</code></pre>
+ANSI, HTML, BW = ANSI(), HTML(), BW()</code></pre>
 </details>
 </section>
 <section>
@@ -91,142 +61,6 @@ class WrongEType(Exception):
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="hosh.misc.exception.CellValueTooHigh"><code class="flex name class">
-<span>class <span class="ident">CellValueTooHigh</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class CellValueTooHigh(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.DanglingEtype"><code class="flex name class">
-<span>class <span class="ident">DanglingEtype</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class DanglingEtype(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.ElementTooHigh"><code class="flex name class">
-<span>class <span class="ident">ElementTooHigh</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class ElementTooHigh(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.WrongContent"><code class="flex name class">
-<span>class <span class="ident">WrongContent</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class WrongContent(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.WrongEType"><code class="flex name class">
-<span>class <span class="ident">WrongEType</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class WrongEType(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.WrongIdentifier"><code class="flex name class">
-<span>class <span class="ident">WrongIdentifier</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class WrongIdentifier(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-<dt id="hosh.misc.exception.WrongVersion"><code class="flex name class">
-<span>class <span class="ident">WrongVersion</span></span>
-<span>(</span><span>*args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class WrongVersion(Exception):
-    pass</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-</dd>
-</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -237,32 +71,7 @@ class WrongEType(Exception):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="hosh.misc" href="index.html">hosh.misc</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="hosh.misc.exception.CellValueTooHigh" href="#hosh.misc.exception.CellValueTooHigh">CellValueTooHigh</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.DanglingEtype" href="#hosh.misc.exception.DanglingEtype">DanglingEtype</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.ElementTooHigh" href="#hosh.misc.exception.ElementTooHigh">ElementTooHigh</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.WrongContent" href="#hosh.misc.exception.WrongContent">WrongContent</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.WrongEType" href="#hosh.misc.exception.WrongEType">WrongEType</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.WrongIdentifier" href="#hosh.misc.exception.WrongIdentifier">WrongIdentifier</a></code></h4>
-</li>
-<li>
-<h4><code><a title="hosh.misc.exception.WrongVersion" href="#hosh.misc.exception.WrongVersion">WrongVersion</a></code></h4>
-</li>
+<li><code><a title="hosh" href="index.html">hosh</a></code></li>
 </ul>
 </li>
 </ul>

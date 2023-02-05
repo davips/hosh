@@ -128,6 +128,10 @@ def removal_elem(field, asbin=False):
 <dd>
 <div class="desc"><p>Support modules are hidden here to avoid polluting the API</p></div>
 </dd>
+<dt><code class="name"><a title="hosh.theme" href="theme.html">hosh.theme</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 </dl>
 </section>
 <section>
@@ -384,10 +388,8 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         UT40_4 is recommended and default, since it is the most compatible with other systems (git, SHA-1, etc)
     &#34;&#34;&#34;
 
-    shorter = False
-    _repr = None
     _n, _id, _ansi_light, _ansi_dark = None, None, None, None
-    _sidc_light, _sidc_dark, _sid, _etype, _rgb_light, _rgb_dark = None, None, None, None, None, None
+    _sansi_light, _sansi_dark, _sid, _etype, _rgb_light, _rgb_dark = None, None, None, None, None, None
 
     _etype_inducer, _bits, _ø = None, None, None
     _rev = None
@@ -607,7 +609,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     @property
     def sid(self):
         &#34;&#34;&#34;
-        Shorter id (base-922 using up to 2 bytes utf8 per char)
+        Shorter id (base-777 using up to 2 bytes utf8 per char)
 
         Usage:
 
@@ -641,7 +643,8 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         return self._ansi_dark if GLOBAL[&#34;dark_theme&#34;] else self._ansi_light
 
     @property
-    def idc(self):
+    def idc(self):  # pragma: no cover
+        print(&#34;&#39;hosh.idc&#39; is deprecated, use &#39;hosh.ansi&#39; instead&#34;)
         return self.ansi
 
     @property
@@ -669,28 +672,43 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         return ansi2html(self.ansi)
 
     @property
-    def sidc(self):
+    def shtml(self):
+        &#34;&#34;&#34;Short colored html digest&#34;&#34;&#34;
+        return ansi2html(self.sansi)
+
+    @property
+    def sidc(self):  # pragma: no cover
+        print(&#34;&#39;hosh.sidc&#39; is deprecated, please use &#39;hosh.sansi&#39; instead&#34;)
+        return self.sansi
+
+    @property
+    def sansi(self):
         &#34;&#34;&#34;
-        Shorter colored id (base-922 using up to 2 bytes utf8 per char)
+        Shorter colored id (base-777 using up to 2 bytes utf8 per char)
 
         Usage:
 
         &gt;&gt;&gt; from hosh import ø
-        &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sidc)
+        &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sansi)
         \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
 
         Returns
         -------
         Short utf-8 colored textual representation
         &#34;&#34;&#34;
-        if self._sidc_light is None:
-            self._sidc_light, self._sidc_dark = id2ansi(self.sid)
-        return self._sidc_dark if GLOBAL[&#34;dark_theme&#34;] else self._sidc_light
+        if self._sansi_light is None:
+            self._sansi_light, self._sansi_dark = id2ansi(self.sid)
+        return self._sansi_dark if GLOBAL[&#34;dark_theme&#34;] else self._sansi_light
 
     def __repr__(self):
-        if self._repr is None:
-            self._repr = self.sidc if Hosh.shorter else self.idc
-        return self._repr
+        if GLOBAL[&#34;format&#34;] == BW:
+            return self.sid if GLOBAL[&#34;short&#34;] else self.id
+        elif GLOBAL[&#34;format&#34;] == ANSI:
+            return self.sansi if GLOBAL[&#34;short&#34;] else self.ansi
+        elif GLOBAL[&#34;format&#34;] == HTML:
+            return self.shtml if GLOBAL[&#34;short&#34;] else self.html
+        else:  # pragma: no cover
+            raise Exception(f&#34;Unknown format: {GLOBAL[&#39;format&#39;]}&#34;)
 
     # @property
     # def bits(self):
@@ -855,7 +873,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         # return Hosh.fromn((self.n + self.convert(other).n) % self.order, self.version)
 
     def __str__(self):
-        return self.sid if Hosh.shorter else self.id
+        return self.sid if GLOBAL[&#34;short&#34;] else self.id
 
     def __eq__(self, other):
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
@@ -874,7 +892,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).show(colored=False)
         voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
         &#34;&#34;&#34;
-        return print(self.idc if colored else self.id)
+        return print(self.ansi if colored else self.id)
 
     def short(self, colored=True):
         &#34;&#34;&#34;
@@ -883,7 +901,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).short(colored=False)
         lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
         &#34;&#34;&#34;
-        return print(self.sidc if colored else self.sid)
+        return print(self.sansi if colored else self.sid)
 
     def __hash__(self):
         return self.n % maxsize
@@ -1086,13 +1104,6 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 <ul class="hlist">
 <li><a title="hosh.misc.identity.Identity" href="misc/identity.html#hosh.misc.identity.Identity">Identity</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="hosh.Hosh.shorter"><code class="name">var <span class="ident">shorter</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Static methods</h3>
 <dl>
 <dt id="hosh.Hosh.fromid"><code class="name flex">
@@ -1428,7 +1439,8 @@ def id(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def idc(self):
+def idc(self):  # pragma: no cover
+    print(&#34;&#39;hosh.idc&#39; is deprecated, use &#39;hosh.ansi&#39; instead&#34;)
     return self.ansi</code></pre>
 </details>
 </dd>
@@ -1516,9 +1528,59 @@ def rgb(self):
     return self._rgb_dark if GLOBAL[&#34;dark_theme&#34;] else self._rgb_light</code></pre>
 </details>
 </dd>
+<dt id="hosh.Hosh.sansi"><code class="name">var <span class="ident">sansi</span></code></dt>
+<dd>
+<div class="desc"><p>Shorter colored id (base-777 using up to 2 bytes utf8 per char)</p>
+<p>Usage:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
+&gt;&gt;&gt; print((ø * b'65e987978g').sansi)
+[38;5;156m[1m[48;5;0mȟ[0m[38;5;155m[1m[48;5;0mɟ[0m[38;5;185m[1m[48;5;0mì[0m[38;5;113m[1m[48;5;0mӧ[0m[38;5;119m[1m[48;5;0mД[0m[38;5;185m[1m[48;5;0mɫ[0m[38;5;113m[1m[48;5;0mŖ[0m[38;5;119m[1m[48;5;0mā[0m[38;5;149m[1m[48;5;0mö[0m[38;5;113m[1m[48;5;0mơ[0m[38;5;83m[1m[48;5;0mɟ[0m[38;5;155m[1m[48;5;0mբ[0m[38;5;149m[1m[48;5;0mƢ[0m[38;5;119m[1m[48;5;0mŊ[0m[38;5;185m[1m[48;5;0mþ[0m[38;5;119m[1m[48;5;0mX[0m[38;5;156m[1m[48;5;0mÊ[0m[38;5;155m[1m[48;5;0mϱ[0m[38;5;185m[1m[48;5;0mՎ[0m[38;5;113m[1m[48;5;0mҲ[0m[38;5;119m[1m[48;5;0mģ[0m[38;5;185m[1m[48;5;0mţ[0m[38;5;113m[1m[48;5;0mՀ[0m[38;5;119m[1m[48;5;0mɄ[0m[38;5;149m[1m[48;5;0mЌ[0m
+</code></pre>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Short utf-8 colored textual representation</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sansi(self):
+    &#34;&#34;&#34;
+    Shorter colored id (base-777 using up to 2 bytes utf8 per char)
+
+    Usage:
+
+    &gt;&gt;&gt; from hosh import ø
+    &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sansi)
+    \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
+
+    Returns
+    -------
+    Short utf-8 colored textual representation
+    &#34;&#34;&#34;
+    if self._sansi_light is None:
+        self._sansi_light, self._sansi_dark = id2ansi(self.sid)
+    return self._sansi_dark if GLOBAL[&#34;dark_theme&#34;] else self._sansi_light</code></pre>
+</details>
+</dd>
+<dt id="hosh.Hosh.shtml"><code class="name">var <span class="ident">shtml</span></code></dt>
+<dd>
+<div class="desc"><p>Short colored html digest</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def shtml(self):
+    &#34;&#34;&#34;Short colored html digest&#34;&#34;&#34;
+    return ansi2html(self.sansi)</code></pre>
+</details>
+</dd>
 <dt id="hosh.Hosh.sid"><code class="name">var <span class="ident">sid</span></code></dt>
 <dd>
-<div class="desc"><p>Shorter id (base-922 using up to 2 bytes utf8 per char)</p>
+<div class="desc"><p>Shorter id (base-777 using up to 2 bytes utf8 per char)</p>
 <p>Usage:</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
 &gt;&gt;&gt; (ø * b'65e987978g').sid
@@ -1536,7 +1598,7 @@ def rgb(self):
 <pre><code class="python">@property
 def sid(self):
     &#34;&#34;&#34;
-    Shorter id (base-922 using up to 2 bytes utf8 per char)
+    Shorter id (base-777 using up to 2 bytes utf8 per char)
 
     Usage:
 
@@ -1555,39 +1617,15 @@ def sid(self):
 </dd>
 <dt id="hosh.Hosh.sidc"><code class="name">var <span class="ident">sidc</span></code></dt>
 <dd>
-<div class="desc"><p>Shorter colored id (base-922 using up to 2 bytes utf8 per char)</p>
-<p>Usage:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh import ø
-&gt;&gt;&gt; print((ø * b'65e987978g').sidc)
-[38;5;156m[1m[48;5;0mȟ[0m[38;5;155m[1m[48;5;0mɟ[0m[38;5;185m[1m[48;5;0mì[0m[38;5;113m[1m[48;5;0mӧ[0m[38;5;119m[1m[48;5;0mД[0m[38;5;185m[1m[48;5;0mɫ[0m[38;5;113m[1m[48;5;0mŖ[0m[38;5;119m[1m[48;5;0mā[0m[38;5;149m[1m[48;5;0mö[0m[38;5;113m[1m[48;5;0mơ[0m[38;5;83m[1m[48;5;0mɟ[0m[38;5;155m[1m[48;5;0mբ[0m[38;5;149m[1m[48;5;0mƢ[0m[38;5;119m[1m[48;5;0mŊ[0m[38;5;185m[1m[48;5;0mþ[0m[38;5;119m[1m[48;5;0mX[0m[38;5;156m[1m[48;5;0mÊ[0m[38;5;155m[1m[48;5;0mϱ[0m[38;5;185m[1m[48;5;0mՎ[0m[38;5;113m[1m[48;5;0mҲ[0m[38;5;119m[1m[48;5;0mģ[0m[38;5;185m[1m[48;5;0mţ[0m[38;5;113m[1m[48;5;0mՀ[0m[38;5;119m[1m[48;5;0mɄ[0m[38;5;149m[1m[48;5;0mЌ[0m
-</code></pre>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>Short utf-8 colored textual representation</code></dt>
-<dd>&nbsp;</dd>
-</dl></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def sidc(self):
-    &#34;&#34;&#34;
-    Shorter colored id (base-922 using up to 2 bytes utf8 per char)
-
-    Usage:
-
-    &gt;&gt;&gt; from hosh import ø
-    &gt;&gt;&gt; print((ø * b&#39;65e987978g&#39;).sidc)
-    \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
-
-    Returns
-    -------
-    Short utf-8 colored textual representation
-    &#34;&#34;&#34;
-    if self._sidc_light is None:
-        self._sidc_light, self._sidc_dark = id2ansi(self.sid)
-    return self._sidc_dark if GLOBAL[&#34;dark_theme&#34;] else self._sidc_light</code></pre>
+def sidc(self):  # pragma: no cover
+    print(&#34;&#39;hosh.sidc&#39; is deprecated, please use &#39;hosh.sansi&#39; instead&#34;)
+    return self.sansi</code></pre>
 </details>
 </dd>
 <dt id="hosh.Hosh.ø"><code class="name">var <span class="ident">ø</span></code></dt>
@@ -1939,7 +1977,7 @@ lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
     &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).short(colored=False)
     lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
     &#34;&#34;&#34;
-    return print(self.sidc if colored else self.sid)</code></pre>
+    return print(self.sansi if colored else self.sid)</code></pre>
 </details>
 </dd>
 <dt id="hosh.Hosh.show"><code class="name flex">
@@ -1961,7 +1999,7 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
     &gt;&gt;&gt; Hosh(b&#34;asdf86fasd&#34;).show(colored=False)
     voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
     &#34;&#34;&#34;
-    return print(self.idc if colored else self.id)</code></pre>
+    return print(self.ansi if colored else self.id)</code></pre>
 </details>
 </dd>
 </dl>
@@ -1981,6 +2019,7 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <li><code><a title="hosh.groups" href="groups.html">hosh.groups</a></code></li>
 <li><code><a title="hosh.hosh_" href="hosh_.html">hosh.hosh_</a></code></li>
 <li><code><a title="hosh.misc" href="misc/index.html">hosh.misc</a></code></li>
+<li><code><a title="hosh.theme" href="theme.html">hosh.theme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-variables">Global variables</a></h3>
@@ -2018,9 +2057,10 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <li><code><a title="hosh.Hosh.rev" href="#hosh.Hosh.rev">rev</a></code></li>
 <li><code><a title="hosh.Hosh.rgb" href="#hosh.Hosh.rgb">rgb</a></code></li>
 <li><code><a title="hosh.Hosh.root" href="#hosh.Hosh.root">root</a></code></li>
+<li><code><a title="hosh.Hosh.sansi" href="#hosh.Hosh.sansi">sansi</a></code></li>
 <li><code><a title="hosh.Hosh.short" href="#hosh.Hosh.short">short</a></code></li>
-<li><code><a title="hosh.Hosh.shorter" href="#hosh.Hosh.shorter">shorter</a></code></li>
 <li><code><a title="hosh.Hosh.show" href="#hosh.Hosh.show">show</a></code></li>
+<li><code><a title="hosh.Hosh.shtml" href="#hosh.Hosh.shtml">shtml</a></code></li>
 <li><code><a title="hosh.Hosh.sid" href="#hosh.Hosh.sid">sid</a></code></li>
 <li><code><a title="hosh.Hosh.sidc" href="#hosh.Hosh.sidc">sidc</a></code></li>
 <li><code><a title="hosh.Hosh.ø" href="#hosh.Hosh.ø">ø</a></code></li>
