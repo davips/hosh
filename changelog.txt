@@ -1,1 +1,2 @@
-Fix color theme to reflect changes in GLOBAL setting
+Enable config for dark_theme, format, short
+Deprecate hosh.idc and hosh.sidc

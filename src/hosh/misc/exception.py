@@ -40,8 +40,6 @@ class WrongVersion(Exception):
     pass
 
 
-class WrongOperands(Exception):
-    pass
 
 
 class ElementTooHigh(Exception):

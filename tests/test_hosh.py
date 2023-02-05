@@ -32,7 +32,6 @@ from hosh.hosh_ import (
     Hosh,
     WrongContent,
     WrongVersion,
-    WrongOperands,
     ElementTooHigh,
     WrongIdentifier,
 )

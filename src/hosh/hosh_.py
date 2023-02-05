@@ -30,7 +30,6 @@ from hosh.misc.colors import ansi2html, id2ansi, id2rgb
 from hosh.misc.core import cells_id_fromblob, cells_fromid, id_fromcells
 from hosh.misc.encoding.base777 import b777enc
 from hosh.misc.exception import (
-    WrongOperands,
     WrongContent,
     DanglingEtype,
     CellValueTooHigh,
@@ -39,6 +38,7 @@ from hosh.misc.exception import (
     WrongVersion,
 )
 from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells, cellspow, cellsroot
+from hosh.theme import HTML, ANSI, BW
 
 
 class Hosh:
@@ -125,10 +125,8 @@ class Hosh:
         UT40_4 is recommended and default, since it is the most compatible with other systems (git, SHA-1, etc)
     """
 
-    shorter = False
-    _repr = None
     _n, _id, _ansi_light, _ansi_dark = None, None, None, None
-    _sidc_light, _sidc_dark, _sid, _etype, _rgb_light, _rgb_dark = None, None, None, None, None, None
+    _sansi_light, _sansi_dark, _sid, _etype, _rgb_light, _rgb_dark = None, None, None, None, None, None
 
     _etype_inducer, _bits, _ø = None, None, None
     _rev = None
@@ -348,7 +346,7 @@ class Hosh:
     @property
     def sid(self):
         """
-        Shorter id (base-922 using up to 2 bytes utf8 per char)
+        Shorter id (base-777 using up to 2 bytes utf8 per char)
 
         Usage:
 
@@ -382,7 +380,8 @@ class Hosh:
         return self._ansi_dark if GLOBAL["dark_theme"] else self._ansi_light
 
     @property
-    def idc(self):
+    def idc(self):  # pragma: no cover
+        print("'hosh.idc' is deprecated, use 'hosh.ansi' instead")
         return self.ansi
 
     @property
@@ -410,28 +409,43 @@ class Hosh:
         return ansi2html(self.ansi)
 
     @property
-    def sidc(self):
+    def shtml(self):
+        """Short colored html digest"""
+        return ansi2html(self.sansi)
+
+    @property
+    def sidc(self):  # pragma: no cover
+        print("'hosh.sidc' is deprecated, please use 'hosh.sansi' instead")
+        return self.sansi
+
+    @property
+    def sansi(self):
         """
-        Shorter colored id (base-922 using up to 2 bytes utf8 per char)
+        Shorter colored id (base-777 using up to 2 bytes utf8 per char)
 
         Usage:
 
         >>> from hosh import ø
-        >>> print((ø * b'65e987978g').sidc)
+        >>> print((ø * b'65e987978g').sansi)
         \x1b[38;5;156m\x1b[1m\x1b[48;5;0mȟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mì\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mӧ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mД\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mɫ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mŖ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mā\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mö\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mơ\x1b[0m\x1b[38;5;83m\x1b[1m\x1b[48;5;0mɟ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mբ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mƢ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mŊ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mþ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mX\x1b[0m\x1b[38;5;156m\x1b[1m\x1b[48;5;0mÊ\x1b[0m\x1b[38;5;155m\x1b[1m\x1b[48;5;0mϱ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mՎ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mҲ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mģ\x1b[0m\x1b[38;5;185m\x1b[1m\x1b[48;5;0mţ\x1b[0m\x1b[38;5;113m\x1b[1m\x1b[48;5;0mՀ\x1b[0m\x1b[38;5;119m\x1b[1m\x1b[48;5;0mɄ\x1b[0m\x1b[38;5;149m\x1b[1m\x1b[48;5;0mЌ\x1b[0m
 
         Returns
         -------
         Short utf-8 colored textual representation
         """
-        if self._sidc_light is None:
-            self._sidc_light, self._sidc_dark = id2ansi(self.sid)
-        return self._sidc_dark if GLOBAL["dark_theme"] else self._sidc_light
+        if self._sansi_light is None:
+            self._sansi_light, self._sansi_dark = id2ansi(self.sid)
+        return self._sansi_dark if GLOBAL["dark_theme"] else self._sansi_light
 
     def __repr__(self):
-        if self._repr is None:
-            self._repr = self.sidc if Hosh.shorter else self.idc
-        return self._repr
+        if GLOBAL["format"] == BW:
+            return self.sid if GLOBAL["short"] else self.id
+        elif GLOBAL["format"] == ANSI:
+            return self.sansi if GLOBAL["short"] else self.ansi
+        elif GLOBAL["format"] == HTML:
+            return self.shtml if GLOBAL["short"] else self.html
+        else:  # pragma: no cover
+            raise Exception(f"Unknown format: {GLOBAL['format']}")
 
     # @property
     # def bits(self):
@@ -596,7 +610,7 @@ class Hosh:
         # return Hosh.fromn((self.n + self.convert(other).n) % self.order, self.version)
 
     def __str__(self):
-        return self.sid if Hosh.shorter else self.id
+        return self.sid if GLOBAL["short"] else self.id
 
     def __eq__(self, other):
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
@@ -615,7 +629,7 @@ class Hosh:
         >>> Hosh(b"asdf86fasd").show(colored=False)
         voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
         """
-        return print(self.idc if colored else self.id)
+        return print(self.ansi if colored else self.id)
 
     def short(self, colored=True):
         """
@@ -624,7 +638,7 @@ class Hosh:
         >>> Hosh(b"asdf86fasd").short(colored=False)
         lϊӑơӫǯÃϺŮϳȐŁЬĽҪƉǏԛȪƜfÞӠȕՇ
         """
-        return print(self.sidc if colored else self.sid)
+        return print(self.sansi if colored else self.sid)
 
     def __hash__(self):
         return self.n % maxsize
