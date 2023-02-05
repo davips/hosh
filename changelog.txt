@@ -1,2 +1,3 @@
-Enable config for dark_theme, format, short
-Deprecate hosh.idc and hosh.sidc
+Fix html
+
+Make theme more flexible through callable
