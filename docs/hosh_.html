@@ -52,6 +52,7 @@ from functools import reduce
 from sys import maxsize
 from typing import Union
 
+from hosh.theme import HTML, ANSI, BW
 from hosh.config import GLOBAL
 from hosh.groups import UT40_4, groups
 from hosh.misc.colors import ansi2html, id2ansi, id2rgb
@@ -66,7 +67,6 @@ from hosh.misc.exception import (
     WrongVersion,
 )
 from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells, cellspow, cellsroot
-from hosh.theme import HTML, ANSI, BW
 
 
 class Hosh:
@@ -472,6 +472,8 @@ class Hosh:
             return self.sansi if GLOBAL[&#34;short&#34;] else self.ansi
         elif GLOBAL[&#34;format&#34;] == HTML:
             return self.shtml if GLOBAL[&#34;short&#34;] else self.html
+        elif callable(GLOBAL[&#34;format&#34;]):  # pragma: no cover
+            return GLOBAL[&#34;format&#34;](self)
         else:  # pragma: no cover
             raise Exception(f&#34;Unknown format: {GLOBAL[&#39;format&#39;]}&#34;)
 
@@ -1365,6 +1367,8 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             return self.sansi if GLOBAL[&#34;short&#34;] else self.ansi
         elif GLOBAL[&#34;format&#34;] == HTML:
             return self.shtml if GLOBAL[&#34;short&#34;] else self.html
+        elif callable(GLOBAL[&#34;format&#34;]):  # pragma: no cover
+            return GLOBAL[&#34;format&#34;](self)
         else:  # pragma: no cover
             raise Exception(f&#34;Unknown format: {GLOBAL[&#39;format&#39;]}&#34;)
 

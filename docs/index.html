@@ -707,6 +707,8 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             return self.sansi if GLOBAL[&#34;short&#34;] else self.ansi
         elif GLOBAL[&#34;format&#34;] == HTML:
             return self.shtml if GLOBAL[&#34;short&#34;] else self.html
+        elif callable(GLOBAL[&#34;format&#34;]):  # pragma: no cover
+            return GLOBAL[&#34;format&#34;](self)
         else:  # pragma: no cover
             raise Exception(f&#34;Unknown format: {GLOBAL[&#39;format&#39;]}&#34;)
 
