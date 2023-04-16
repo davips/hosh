@@ -24,7 +24,6 @@ from functools import reduce
 from sys import maxsize
 from typing import Union
 
-from hosh.theme import HTML, ANSI, BW
 from hosh.config import GLOBAL
 from hosh.groups import UT40_4, groups
 from hosh.misc.colors import ansi2html, id2ansi, id2rgb
@@ -39,6 +38,7 @@ from hosh.misc.exception import (
     WrongVersion,
 )
 from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells, cellspow, cellsroot
+from hosh.theme import HTML, ANSI, BW
 
 
 class Hosh:
@@ -178,7 +178,10 @@ class Hosh:
 
     @property
     def rev(self):
-        """Element with the reversed indentifier
+        """
+        Element with the reversed indentifier
+
+        Not all hoshes are digest-reversible. This makes the operation mostly useless.
 
         Usage:
 
@@ -849,3 +852,19 @@ class Hosh:
             gen = (Hosh(f"{self.id}-{i}".encode()) for i in range(n - 1))
             self._composition_nolast[n] = reduce(operator.mul, gen)
         return self._composition_nolast[n]
+
+    @property
+    def bits(self):
+        """
+        >>> from hosh import Hosh, groups
+        >>> Hosh(b"asd").bits
+        '000110111101001001111010010101011100011010000011101010100000000001101101111101100111110100001011001001111001110110101101100110000000011111000110100100110011110010101110100011111101100010010111100111010101010011001110000001000100001101001111'
+        >>> bits = Hosh.fromn(groups[40].p6 - 1).bits  # Max number.
+        >>> bits
+        '111111111111111111111111111111011111011000000000000000000000000110111011011111101111111111111111001101110000101001110100000000000011001100111000100101011110111011111001000010011000001000000100101101100110010011110110001000101011101110110000'
+        >>> int(bits, 2) == groups[40].p6 - 1
+        True
+        """
+        if self._bits is None:
+            self._bits = '{:b}'.format(self.n).rjust(self.digits * 6, "0")
+        return self._bits
