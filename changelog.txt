@@ -1,3 +1,3 @@
-Fix html
-
-Make theme more flexible through callable
+Fix h.rev for hybrid and unordered
+Fix py version
+Add Downloads badge

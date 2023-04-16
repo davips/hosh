@@ -188,9 +188,20 @@ class Hosh:
         'jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J'
         >>> "".join(reversed(h.id))
         'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
+        >>> h = Hosh.fromid("ab_cabcdefabcdefabcdefabcdefabcdefabcdef")
+        >>> h.rev.id
+        'fe_dcbafedcbafedcbafedcbafedcbafedcbacba'
+        >>> h = Hosh.fromid("2_dbe78441d_____________________________")
+        >>> h.rev.id
+        'd_14487ebd2_____________________________'
         """
         if self._rev is None:
-            self._rev = Hosh.fromid("".join(reversed(self.id)))
+            id = self.id
+            if self.etype == "hybrid":
+                id = id[:2] + id[3:-2] + "_" + id[-2:]
+            elif self.etype == "unordered":
+                id = "_____________________________" + id[:1] + id[2:10] + "_" + id[10:11]
+            self._rev = Hosh.fromid("".join(reversed(id)))
         return self._rev
 
     @property
