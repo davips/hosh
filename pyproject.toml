@@ -11,20 +11,20 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-wheel = "^0.37.0"
-blake3 = "^0.2.0"
-colored = "1.4.2"  # Newer minor version has breaking changes.
+wheel = "^0.40.0"
+blake3 = "^0.3.3"
+colored = "1.4.2" # Newer minor version has breaking changes.
 ansi2html = "^1.6.0"
 bs4 = "^0.0.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pdoc3 = "^0.10.0"
-autoreadme = "^0.2102.20"
-pytest = "^6.2.5"
-pytest-cov = "^2.12.1"
+pytest = "^7.3.1"
+pytest-cov = "^4.0.0"
 ipython = "^7.27.0"
 black = "^21.9b0"
 flake8 = "^4.0.1"
+autoreadme = "^0.2302.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
