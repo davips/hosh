@@ -1,33 +1,41 @@
 echo
 echo "----------------- updating poetry... -----------------------"
 poetry update
-poetry install
+poetry install --no-root
+
 echo "----------------- updated -----------------------"
 echo; echo
 
 echo
 echo "----------------- testing... -----------------------"
-read -p "press enter"
-poetry run pytest src tests --cov=src --doctest-modules
+poetry run pytest src tests --cov=src --doctest-modules  --cov-report term-missing
 echo "----------------- tested -----------------------"
 echo; echo
 
-echo
-echo "----------------- gh workflow testing... -----------------------"
-read -p "press enter"
-sudo systemctl enable docker
-sudo systemctl start docker
-coverage xml
-act -j build
-sudo systemctl stop docker
-sudo systemctl disable docker
-echo "----------------- gh workflow -----------------------"
-echo; echo
+#echo
+#echo "----------------- gh workflow testing... -----------------------"
+#read -p "press enter"
+# sudo systemctl enable docker
+# sudo systemctl start docker
+# coverage xml
+# act -j build
+# sudo systemctl stop docker
+# sudo systemctl disable docker
+#echo "----------------- gh workflow -----------------------"
+#echo; echo
 
 
 echo
 echo "----------------- docs/black... -----------------------"
 read -p "press enter"
+#################################################################################
+#################################################################################
+echo ">>>>>>   install project package for better IDE class hierarchy view <<<<<<<<"
+echo "          (this removes duplicates from IDE class hierarchy)"
+source /home/davi/.cache/pypoetry/virtualenvs/hosh-pIwr8ah1-py3.10/bin/activate
+pip install .
+#################################################################################
+#################################################################################
 rm docs -rf
 poetry run black -l200 src/ tests/
 poetry run pdoc --html --force hosh -o docs
@@ -38,12 +46,22 @@ echo "----------------- docs/black done -----------------------"
 echo; echo
 
 echo "---------------- readme ----------------"
-read -p "press enter"
 poetry run autoreadme -i README-edit.md -s examples/ -o README.md
 echo "---------------- readme done ----------------"
 echo; echo
 
-echo "--------------- version bump --------------"
+#################################################################################
+#################################################################################
+echo ">>>>>>   uninstall project package for IDE class hierarchy <<<<<<<<" 
+pip uninstall hosh -y
+deactivate
+#################################################################################
+#################################################################################
+echo; echo
+
+
+
+echo "×××××××××××××××× version bump ××××××××××××××××"
 read -p "press enter"
 poetry version patch
 echo "--------------- version bumped --------------"

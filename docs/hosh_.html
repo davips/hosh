@@ -216,9 +216,20 @@ class Hosh:
         &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
         &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
         &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;ab_cabcdefabcdefabcdefabcdefabcdefabcdef&#34;)
+        &gt;&gt;&gt; h.rev.id
+        &#39;fe_dcbafedcbafedcbafedcbafedcbafedcbacba&#39;
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;2_dbe78441d_____________________________&#34;)
+        &gt;&gt;&gt; h.rev.id
+        &#39;d_14487ebd2_____________________________&#39;
         &#34;&#34;&#34;
         if self._rev is None:
-            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+            id = self.id
+            if self.etype == &#34;hybrid&#34;:
+                id = id[:2] + id[3:-2] + &#34;_&#34; + id[-2:]
+            elif self.etype == &#34;unordered&#34;:
+                id = &#34;_____________________________&#34; + id[:1] + id[2:10] + &#34;_&#34; + id[10:11]
+            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(id)))
         return self._rev
 
     @property
@@ -1111,9 +1122,20 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
         &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
         &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;ab_cabcdefabcdefabcdefabcdefabcdefabcdef&#34;)
+        &gt;&gt;&gt; h.rev.id
+        &#39;fe_dcbafedcbafedcbafedcbafedcbafedcbacba&#39;
+        &gt;&gt;&gt; h = Hosh.fromid(&#34;2_dbe78441d_____________________________&#34;)
+        &gt;&gt;&gt; h.rev.id
+        &#39;d_14487ebd2_____________________________&#39;
         &#34;&#34;&#34;
         if self._rev is None:
-            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+            id = self.id
+            if self.etype == &#34;hybrid&#34;:
+                id = id[:2] + id[3:-2] + &#34;_&#34; + id[-2:]
+            elif self.etype == &#34;unordered&#34;:
+                id = &#34;_____________________________&#34; + id[:1] + id[2:10] + &#34;_&#34; + id[10:11]
+            self._rev = Hosh.fromid(&#34;&#34;.join(reversed(id)))
         return self._rev
 
     @property
@@ -2142,6 +2164,12 @@ def n(self):
 'jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J'
 &gt;&gt;&gt; &quot;&quot;.join(reversed(h.id))
 'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
+&gt;&gt;&gt; h = Hosh.fromid(&quot;ab_cabcdefabcdefabcdefabcdefabcdefabcdef&quot;)
+&gt;&gt;&gt; h.rev.id
+'fe_dcbafedcbafedcbafedcbafedcbafedcbacba'
+&gt;&gt;&gt; h = Hosh.fromid(&quot;2_dbe78441d_____________________________&quot;)
+&gt;&gt;&gt; h.rev.id
+'d_14487ebd2_____________________________'
 </code></pre></div>
 <details class="source">
 <summary>
@@ -2159,9 +2187,20 @@ def rev(self):
     &#39;jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J&#39;
     &gt;&gt;&gt; &#34;&#34;.join(reversed(h.id))
     &#39;J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj&#39;
+    &gt;&gt;&gt; h = Hosh.fromid(&#34;ab_cabcdefabcdefabcdefabcdefabcdefabcdef&#34;)
+    &gt;&gt;&gt; h.rev.id
+    &#39;fe_dcbafedcbafedcbafedcbafedcbafedcbacba&#39;
+    &gt;&gt;&gt; h = Hosh.fromid(&#34;2_dbe78441d_____________________________&#34;)
+    &gt;&gt;&gt; h.rev.id
+    &#39;d_14487ebd2_____________________________&#39;
     &#34;&#34;&#34;
     if self._rev is None:
-        self._rev = Hosh.fromid(&#34;&#34;.join(reversed(self.id)))
+        id = self.id
+        if self.etype == &#34;hybrid&#34;:
+            id = id[:2] + id[3:-2] + &#34;_&#34; + id[-2:]
+        elif self.etype == &#34;unordered&#34;:
+            id = &#34;_____________________________&#34; + id[:1] + id[2:10] + &#34;_&#34; + id[10:11]
+        self._rev = Hosh.fromid(&#34;&#34;.join(reversed(id)))
     return self._rev</code></pre>
 </details>
 </dd>

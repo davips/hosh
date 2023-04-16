@@ -198,27 +198,6 @@ def cells_fromid(id, p):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="hosh.misc.core.blake3"><code class="name flex">
-<span>def <span class="ident">blake3</span></span>(<span>...)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Construct an incremental hasher object, which can accept any number of
-writes. The interface is similar to <code>hashlib.blake2b</code> or <code>hashlib.md5</code>
-from the standard library.</p>
-<p>Positional arguments:
-- <code>data</code> (optional): Input bytes to hash. This is equivalent to calling
-<code>update</code> on the returned hasher.</p>
-<p>Keyword arguments:
-- <code>key</code>: A 32-byte key. Setting this to non-None enables the BLAKE3
-keyed hashing mode.
-- <code>derive_key_context</code>: A hardcoded, globally unique,
-application-specific context string. Setting this to non-None enables
-the BLAKE3 key derivation mode. <code>derive_key_context</code> and <code>key</code> cannot
-be used at the same time.
-- <code>multithreading</code>: See the <code>multithreading</code> argument on the <code>update</code>
-method. This flag only applies to this one function call. It is not a
-persistent setting, and it has no effect if <code>data</code> is omitted.</p></div>
-</dd>
 <dt id="hosh.misc.core.cells_fromid"><code class="name flex">
 <span>def <span class="ident">cells_fromid</span></span>(<span>id, p)</span>
 </code></dt>
@@ -485,7 +464,6 @@ according to the paper</dd>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="hosh.misc.core.blake3" href="#hosh.misc.core.blake3">blake3</a></code></li>
 <li><code><a title="hosh.misc.core.cells_fromid" href="#hosh.misc.core.cells_fromid">cells_fromid</a></code></li>
 <li><code><a title="hosh.misc.core.cells_id_fromblob" href="#hosh.misc.core.cells_id_fromblob">cells_id_fromblob</a></code></li>
 <li><code><a title="hosh.misc.core.id_fromcells" href="#hosh.misc.core.id_fromcells">id_fromcells</a></code></li>
