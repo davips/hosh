@@ -179,32 +179,83 @@ class Hosh:
     @property
     def rev(self):
         """
-        Element with the reversed indentifier
+        Element with the indentifier digit chunks (internal cells) reversed
 
-        Not all hoshes are digest-reversible. This makes the operation mostly useless.
+        This is useful wherever a unary operation is needed.
+        For instance, a function can be represented as a value by its original identifier,
+        and be represented as (an applied) function by its reverse identifier.
+
+        Unordered elements have the last digits reversed as it has only one internal cell.
+
+        Not all hoshes are digest-reversible, i.e., at the digit level, due to the intrinsic mismatch between base 64 (power of two) representation and the group (prime) order.
+        Therefore, we must resort to reversing the cells.
+
+        Probabilistically irrelevant corner cases:
+            The presence of empty cells (i.e., with zero value) might cause migration from one etype to another.
+            The presence of duplicate cells (i.e., with the same value) might make the hosh reverse to itself.
+            See examples below.
 
         Usage:
 
-        >>> from hosh import Hosh
+        >>> from hosh import Hosh, groups
         >>> h = Hosh.fromid("J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj").rev
         >>> h.id
-        'jzydXcnLFSPRTvGVVRUbPkFJ.ux1r4X8euTRu.5J'
-        >>> "".join(reversed(h.id))
-        'J5.uRTue8X4r1xu.JFkPbURVVGvTRPSFLncXdyzj'
+        'lUz6uu1ZBCJf342R7-qKOOqWJgaf3TDHx2M.CWGT'
+        >>> h.rev.rev == h
+        True
         >>> h = Hosh.fromid("ab_cabcdefabcdefabcdefabcdefabcdefabcdef")
         >>> h.rev.id
-        'fe_dcbafedcbafedcbafedcbafedcbafedcbacba'
+        'Hh_c7201818f76878562c52010943fe4f2a7f3b2'
         >>> h = Hosh.fromid("2_dbe78441d_____________________________")
         >>> h.rev.id
-        'd_14487ebd2_____________________________'
+        '2_dbd14487e_____________________________'
+
+        >>> # Limits of subgroup Z.
+        >>> Hosh.fromid(groups[40].firstp).id,  Hosh.fromid(groups[40].lastp).id
+        ('0_100000000_____________________________', 'f_8afffffff_____________________________')
+        >>> Hosh.fromid(groups[40].firstp).rev.id,  Hosh.fromid(groups[40].lastp).rev.id
+        ('0_100000000_____________________________', 'f_8afffffff_____________________________')
+
+        >>> # Limits of subgroup H.
+        >>> Hosh.fromid(groups[40].firstp4).id, Hosh.fromid(groups[40].lastp4).id
+        ('00_1000000000000000000000000000000000000', '.._87c2a630003eec7dffff561b0000004aeffff')
+        >>> Hosh.fromid(groups[40].firstp4).rev.id, Hosh.fromid(groups[40].lastp4).rev.id
+        ('00_9ed100000015ffffffff00000000000000000', '.._87c2a630003eec7dffff561b0000004aeffff')
+        >>> Hosh.fromid(groups[40].firstp4).cells, Hosh.fromid(groups[40].lastp4).cells
+        ([0, 0, 0, 0, 1, 0], [0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        >>> Hosh.fromid(groups[40].firstp4).rev.cells, Hosh.fromid(groups[40].lastp4).rev.cells
+        ([0, 0, 0, 1, 0, 0], [0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+
+        >>> # Limits of group G.
+        >>> Hosh.fromid(groups[40].firstp6).id, Hosh.fromid(groups[40].lastp6).id
+        ('1000000000000000000000000000000000000000', 'g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....')
+        >>> Hosh.fromid(groups[40].firstp6).rev.id, Hosh.fromid(groups[40].lastp6).rev.id
+        ('00_1000000000000000000000000000000000000', 'g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....')
+        >>> Hosh.fromid(groups[40].firstp6).cells, Hosh.fromid(groups[40].lastp6).cells
+        ([0, 1, 0, 0, 0, 0], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        >>> Hosh.fromid(groups[40].firstp6).rev.cells, Hosh.fromid(groups[40].lastp6).rev.cells
+        ([0, 0, 0, 0, 1, 0], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+
+        >>> # Near limits of group G.
+        >>> Hosh.fromn(groups[40].p4+1).id, Hosh.fromn(groups[40].p6 - 2).id
+        ('2000000000000000000000000000000000000000', 'f-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....')
+        >>> Hosh.fromn(groups[40].p4+1).rev.id, Hosh.fromn(groups[40].p6 - 2).rev.id
+        ('ihdwjXvMdIj40gZQq-..5Ai0000j-....3000000', '7XoPrombpt9-UXQnse30Cgud..fcZ6000kv.....')
+        >>> Hosh.fromn(groups[40].p4+1).cells, Hosh.fromn(groups[40].p6 - 2).cells
+        ([0, 1, 0, 0, 0, 1], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627687])
+        >>> Hosh.fromn(groups[40].p4+1).rev.cells, Hosh.fromn(groups[40].p6 - 2).rev.cells
+        ([1, 0, 0, 0, 1, 0], [1099511627687, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
         """
         if self._rev is None:
             id = self.id
-            if self.etype == "hybrid":
-                id = id[:2] + id[3:-2] + "_" + id[-2:]
+            if self.etype == "ordered":
+                self._rev = Hosh(list(reversed(self.cells)))
+            elif self.etype == "hybrid":
+                self._rev = Hosh(self.cells[:2] + list(reversed(self.cells[2:])))
             elif self.etype == "unordered":
-                id = "_____________________________" + id[:1] + id[2:10] + "_" + id[10:11]
-            self._rev = Hosh.fromid("".join(reversed(id)))
+                self._rev = Hosh.fromid(id[:4] + "".join(reversed(id[4:11])) + "_____________________________")
+            else:
+                raise Exception(f"Unexpected condition. etype: {self.etype}")
         return self._rev
 
     @property
@@ -545,10 +596,11 @@ class Hosh:
         return +(+self / +other)
 
     def __neg__(self):
-        """Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
+        """
+        Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
         ps. This differs from +hosh because it creates a lower element.
 
-        Switch positions of cells a2 and a4. This operation is it own inverse.
+        Switch positions of cells a2 and a4. This operation is its own inverse.
 
         Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
         Cells are represented as a matrix in the format:
@@ -568,7 +620,7 @@ class Hosh:
         ps. This differs from -hosh because it creates a higher element.
         For this reason it is adopted in __floordiv__
 
-        Switch positions of cells a2 and a5. This operation is it own inverse.
+        Switch positions of cells a2 and a5. This operation is its own inverse.
 
         Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
         Cells are represented as a matrix in the format:

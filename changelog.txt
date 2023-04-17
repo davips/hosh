@@ -1,4 +1,4 @@
+Replace h.rev by the more robust cell-based scheme
 Impl h.bits
 Fix h.rev for hybrid and unordered
 Fix py version
-Add Downloads badge
