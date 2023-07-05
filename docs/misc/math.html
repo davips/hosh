@@ -156,7 +156,7 @@ def cellsmul(a, b, mod):
     ]
 
 
-def cellsinv(m, mod):
+def cellsinv(m, mod, additive=False):
     &#34;&#34;&#34;
     Inverse of unitriangular matrix modulo &#39;mod&#39;
 
@@ -169,9 +169,17 @@ def cellsinv(m, mod):
 
     Based on https://groupprops.subwiki.org/wiki/Unitriangular_matrix_group:UT(4,p)
 
+    &gt;&gt;&gt; from hosh.misc.math import cellsinv
     &gt;&gt;&gt; e = [42821,772431,428543,443530,42121,7213]
-    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291)==e
+    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291) == e
     True
+
+    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == e
+    True
+
+    &gt;&gt;&gt; e = [1,2,3,4,5,6]
+    &gt;&gt;&gt; cellsinv(e, 7, additive=True)
+    [6, 5, 4, 3, 2, 1]
 
     Parameters
     ----------
@@ -179,11 +187,15 @@ def cellsinv(m, mod):
         List with six values
     mod
         Large prime number
+    additive
+        Whether to calculate additive inverse or not (multiplicative)
 
     Returns
     -------
         The list that corresponds to the inverse element
     &#34;&#34;&#34;
+    if additive:
+        return [(mod - m[0]) % mod, (mod - m[1]) % mod, (mod - m[2]) % mod, (mod - m[3]) % mod, (mod - m[4]) % mod, (mod - m[5]) % mod]
     return [
         -m[0] % mod,
         -m[1] % mod,
@@ -257,7 +269,7 @@ True
 </details>
 </dd>
 <dt id="hosh.misc.math.cellsinv"><code class="name flex">
-<span>def <span class="ident">cellsinv</span></span>(<span>m, mod)</span>
+<span>def <span class="ident">cellsinv</span></span>(<span>m, mod, additive=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Inverse of unitriangular matrix modulo 'mod'</p>
@@ -273,9 +285,17 @@ True
 0
 1</p>
 <p>Based on <a href="https://groupprops.subwiki.org/wiki/Unitriangular_matrix_group:UT(4,p)">https://groupprops.subwiki.org/wiki/Unitriangular_matrix_group:UT(4,p)</a></p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; e = [42821,772431,428543,443530,42121,7213]
-&gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291)==e
+<pre><code class="language-python-repl">&gt;&gt;&gt; from hosh.misc.math import cellsinv
+&gt;&gt;&gt; e = [42821,772431,428543,443530,42121,7213]
+&gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291) == e
 True
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == e
+True
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; e = [1,2,3,4,5,6]
+&gt;&gt;&gt; cellsinv(e, 7, additive=True)
+[6, 5, 4, 3, 2, 1]
 </code></pre>
 <h2 id="parameters">Parameters</h2>
 <dl>
@@ -283,6 +303,8 @@ True
 <dd>List with six values</dd>
 <dt><strong><code>mod</code></strong></dt>
 <dd>Large prime number</dd>
+<dt><strong><code>additive</code></strong></dt>
+<dd>Whether to calculate additive inverse or not (multiplicative)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <pre><code>The list that corresponds to the inverse element
@@ -291,7 +313,7 @@ True
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cellsinv(m, mod):
+<pre><code class="python">def cellsinv(m, mod, additive=False):
     &#34;&#34;&#34;
     Inverse of unitriangular matrix modulo &#39;mod&#39;
 
@@ -304,9 +326,17 @@ True
 
     Based on https://groupprops.subwiki.org/wiki/Unitriangular_matrix_group:UT(4,p)
 
+    &gt;&gt;&gt; from hosh.misc.math import cellsinv
     &gt;&gt;&gt; e = [42821,772431,428543,443530,42121,7213]
-    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291)==e
+    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291), 4294967291) == e
     True
+
+    &gt;&gt;&gt; cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == e
+    True
+
+    &gt;&gt;&gt; e = [1,2,3,4,5,6]
+    &gt;&gt;&gt; cellsinv(e, 7, additive=True)
+    [6, 5, 4, 3, 2, 1]
 
     Parameters
     ----------
@@ -314,11 +344,15 @@ True
         List with six values
     mod
         Large prime number
+    additive
+        Whether to calculate additive inverse or not (multiplicative)
 
     Returns
     -------
         The list that corresponds to the inverse element
     &#34;&#34;&#34;
+    if additive:
+        return [(mod - m[0]) % mod, (mod - m[1]) % mod, (mod - m[2]) % mod, (mod - m[3]) % mod, (mod - m[4]) % mod, (mod - m[5]) % mod]
     return [
         -m[0] % mod,
         -m[1] % mod,

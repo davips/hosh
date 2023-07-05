@@ -63,13 +63,13 @@ class Helper:
     version: str
 
     def __call__(self, blob, etype=&#34;ordered&#34;):
-        return Hosh(blob, etype, self.version)
+        return Hosh(blob, etype=etype, version=self.version)
 
     def u(self, blob):
-        return Hosh(blob, &#34;unordered&#34;, self.version)
+        return Hosh(blob, etype=&#34;unordered&#34;, version=self.version)
 
     def h(self, blob):
-        return Hosh(blob, &#34;hybrid&#34;, self.version)
+        return Hosh(blob, etype=&#34;hybrid&#34;, version=self.version)
 
     fromid = Hosh.fromid
     fromn = Hosh.fromn</code></pre>
@@ -104,13 +104,13 @@ class Helper:
     version: str
 
     def __call__(self, blob, etype=&#34;ordered&#34;):
-        return Hosh(blob, etype, self.version)
+        return Hosh(blob, etype=etype, version=self.version)
 
     def u(self, blob):
-        return Hosh(blob, &#34;unordered&#34;, self.version)
+        return Hosh(blob, etype=&#34;unordered&#34;, version=self.version)
 
     def h(self, blob):
-        return Hosh(blob, &#34;hybrid&#34;, self.version)
+        return Hosh(blob, etype=&#34;hybrid&#34;, version=self.version)
 
     fromid = Hosh.fromid
     fromn = Hosh.fromn</code></pre>
@@ -286,7 +286,7 @@ def fromn(cls, n: int, version=UT40_4):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def h(self, blob):
-    return Hosh(blob, &#34;hybrid&#34;, self.version)</code></pre>
+    return Hosh(blob, etype=&#34;hybrid&#34;, version=self.version)</code></pre>
 </details>
 </dd>
 <dt id="hosh.misc.helper.Helper.u"><code class="name flex">
@@ -299,7 +299,7 @@ def fromn(cls, n: int, version=UT40_4):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def u(self, blob):
-    return Hosh(blob, &#34;unordered&#34;, self.version)</code></pre>
+    return Hosh(blob, etype=&#34;unordered&#34;, version=self.version)</code></pre>
 </details>
 </dd>
 </dl>
