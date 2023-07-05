@@ -127,7 +127,7 @@ def cellsmul(a, b, mod):
     ]
 
 
-def cellsinv(m, mod):
+def cellsinv(m, mod, additive=False):
     """
     Inverse of unitriangular matrix modulo 'mod'
 
@@ -140,9 +140,17 @@ def cellsinv(m, mod):
 
     Based on https://groupprops.subwiki.org/wiki/Unitriangular_matrix_group:UT(4,p)
 
+    >>> from hosh.misc.math import cellsinv
     >>> e = [42821,772431,428543,443530,42121,7213]
-    >>> cellsinv(cellsinv(e, 4294967291), 4294967291)==e
+    >>> cellsinv(cellsinv(e, 4294967291), 4294967291) == e
     True
+
+    >>> cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == e
+    True
+
+    >>> e = [1,2,3,4,5,6]
+    >>> cellsinv(e, 7, additive=True)
+    [6, 5, 4, 3, 2, 1]
 
     Parameters
     ----------
@@ -150,11 +158,15 @@ def cellsinv(m, mod):
         List with six values
     mod
         Large prime number
+    additive
+        Whether to calculate additive inverse or not (multiplicative)
 
     Returns
     -------
         The list that corresponds to the inverse element
     """
+    if additive:
+        return [(mod - m[0]) % mod, (mod - m[1]) % mod, (mod - m[2]) % mod, (mod - m[3]) % mod, (mod - m[4]) % mod, (mod - m[5]) % mod]
     return [
         -m[0] % mod,
         -m[1] % mod,

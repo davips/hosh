@@ -19,8 +19,8 @@
 #  works or verbatim, obfuscated, compiled or rewritten versions of any
 #  part of this work is illegal and unethical regarding the effort and
 #  time spent here.
-import operator
 from functools import reduce
+from operator import mul, add
 from sys import maxsize
 from typing import Union
 
@@ -94,9 +94,9 @@ class Hosh:
     f_9e1a267c8_____________________________
     >>> x.id, (+x).id  # Making an ordered x.
     ('ZN_60eec3e6c7b68087329e16b581401a6bb2b1f', '6BDj3b7Mmj7n-6B8XYaP3akO7400s9FlG4AtcHTp')
-    >>> -x * y != y * -x
+    >>> +x * y != y * +x
     True
-    >>> --x == x
+    >>> ++x == x
     True
     >>> x ** y == +(+x * +y)  # a ** b is a shortcut for +(+a * +b)
     True
@@ -130,11 +130,12 @@ class Hosh:
 
     _etype_inducer, _bits, _ø = None, None, None
     _rev = None
+    components_cache_size = 100
 
     def __init__(self, content, etype="default:ordered", version=UT40_4):
         self.version = version
         self.p, self.p4, self.p6, self.digits, self.bytes, _, _, _, _, _, _ = version
-        self._composition_nolast = {}
+        self._composition_memo = {}
         if isinstance(content, list):
             if etype != "default:ordered":
                 raise DanglingEtype(f"Cannot set etype={etype} when providing cells ({content}).")
@@ -179,16 +180,18 @@ class Hosh:
     @property
     def rev(self):
         """
-        Element with the indentifier digit chunks (internal cells) reversed
+        Reversed element (warning: this is not the inverse element)
+
+        Element with the internal cells reversed.
+        This operation is its own inverse.
 
         This is useful wherever a unary operation is needed.
         For instance, a function can be represented as a value by its original identifier,
-        and be represented as (an applied) function by its reverse identifier.
+        and can be represented as (an applied) function by its reversed element identifier.
 
-        Unordered elements have the last digits reversed as it has only one internal cell.
-
-        Not all hoshes are digest-reversible, i.e., at the digit level, due to the intrinsic mismatch between base 64 (power of two) representation and the group (prime) order.
+        Not all hoshes are digest-reversible, i.e., at the digit level, due to the intrinsic mismatch between base 64 (i.e., a power of two) representation and the group (prime) order.
         Therefore, we must resort to reversing the cells.
+        As an exception, unordered elements do have (most) digits reversed as it has only one internal cell.
 
         Probabilistically irrelevant corner cases:
             The presence of empty cells (i.e., with zero value) might cause migration from one etype to another.
@@ -254,8 +257,8 @@ class Hosh:
                 self._rev = Hosh(self.cells[:2] + list(reversed(self.cells[2:])))
             elif self.etype == "unordered":
                 self._rev = Hosh.fromid(id[:4] + "".join(reversed(id[4:11])) + "_____________________________")
-            else:
-                raise Exception(f"Unexpected condition. etype: {self.etype}")
+            else:  # pragma: no cover
+                raise Exception(f"Unexpected condition. element type: {self.etype}")
         return self._rev
 
     @property
@@ -514,12 +517,6 @@ class Hosh:
         else:  # pragma: no cover
             raise Exception(f"Unknown format: {GLOBAL['format']}")
 
-    # @property
-    # def bits(self):
-    #     if self._bits is None:
-    #         self._bits = bin(self.n)[2:].rjust(256, "0")
-    #     return self._bits
-
     def __xor__(self, other: int):
         if other == 1:
             return self
@@ -596,29 +593,11 @@ class Hosh:
         return +(+self / +other)
 
     def __neg__(self):
-        """
-        Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
-        ps. This differs from +hosh because it creates a lower element.
-
-        Switch positions of cells a2 and a4. This operation is its own inverse.
-
-        Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
-        Cells are represented as a matrix in the format:
-        1 a4 a1 a0
-        0  1 a2 a3
-        0  0  1 a5
-        0  0  0  1
-
-        """
-        cells = self.cells.copy()
-        cells[3] = cells[1]
-        cells[1] = self.cells[3]
-        return Hosh(cells, version=self.version)
+        return Hosh(cellsinv(self.cells, self.p, additive=True), version=self.version)
 
     def __pos__(self):
         """Change disposition of element-matrix cells in a way that even hybrid ids will not commute.
-        ps. This differs from -hosh because it creates a higher element.
-        For this reason it is adopted in __floordiv__
+        ps. Semantics of +hosh are completely unrelated from -hosh as -hosh creates the inverse additive element.
 
         Switch positions of cells a2 and a5. This operation is its own inverse.
 
@@ -758,21 +737,34 @@ class Hosh:
         """
         if k == 1:
             return self
-        return Hosh(cellsroot(self.cells, k, self.p))
+        return Hosh(cellsroot(self.cells, k, self.p), version=self.version)
 
-    def multiplicative_component(self, i, n):
-        """Elements within 'n' components of "multiplicative" decomposition
+    def power_component(self, i, n):
+        """Elements corresponding to `n` components of "multiplicative decomposition" such that
+        `x  =  x1 * x2 * x3 * ... * xn  =  x * x² * x³ * ... * x^n`
 
-        Resulting elements commute among themselves.
+        Not very useful as the resulting elements commute among themselves.
+        This happens because they are all powers of x, making up just a sequence of `x`s .
+
+        Parameters
+        ==========
+        i
+            Desired component index
+        n
+            Desired total number of components
+
+        Returns
+        =======
+            Hosh (component)
 
         >>> a = Hosh(b"a")
-        >>> a.multiplicative_component(0, 1) == a
+        >>> a.power_component(0, 1) == a
         True
-        >>> a.multiplicative_component(0, 2) * a.multiplicative_component(1, 2) == a
+        >>> a.power_component(0, 2) * a.power_component(1, 2) == a
         True
-        >>> a.multiplicative_component(0, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(2, 3) == a
+        >>> a.power_component(0, 3) * a.power_component(1, 3) * a.power_component(2, 3) == a
         True
-        >>> a.multiplicative_component(2, 3) * a.multiplicative_component(1, 3) * a.multiplicative_component(0, 3) == a
+        >>> a.power_component(2, 3) * a.power_component(1, 3) * a.power_component(0, 3) == a
         True
         """
         if i >= n:  # pragma: no cover
@@ -783,15 +775,28 @@ class Hosh:
         r = self.root(exp)
         return r ^ (i + 1)
 
-    def additive_decomposition(self, n):
+    def bad_additive_components(self, n):
         """
-        Return the 'n' additive components for 'x' such that 'x = c1+c2+...+cn'
+        Return the `n` additive components for `x` such that `x = x1 + x2 + ... + xn`
 
-        Remaining values are adjusted in 'cn'.
+        `xn` fills the gap left by the other components remainder.
+        We do not recommend this "decomposition" as it always generates different ids for the same subvalue.
+        For instance,
+            if a list `[value1, value2, value3]` induces ids `a`, `b`, and `any`,
+             another list `[value1, value2, ...]` necessarily induces `c` and `d` as first two ids such that `a != c` and `b != d`.
+
+        Parameters
+        ==========
+        n
+            Desired total number of components
+
+        Returns
+        =======
+            Generator of hoshes
 
         >>> from functools import reduce
         >>> import operator
-        >>> reduce(operator.add, Hosh(b"x").additive_decomposition(5)) == Hosh(b"x")
+        >>> reduce(operator.add, Hosh(b"x").bad_additive_components(5)) == Hosh(b"x")
         True
         """
         den = n * (n + 1) // 2
@@ -803,41 +808,41 @@ class Hosh:
             lst[-1] += rem
             return [l % p for l in lst]
 
-        return (Hosh(list(x)) for x in zip(*(fac(c) for c in self.cells)))
+        return (Hosh(list(x), version=self.version) for x in zip(*(fac(c) for c in self.cells)))
 
-    def additive_component(self, i, n):
+    def bad_additive_component(self, i, n):
         """
-        Return the 'i'-th component of the additive decomposition of current hosh
+        Return the `i`-th additive component for `x` such that `x = x1 + x2 + ... + xn`
 
-        Remaining values are adjusted in the last component.
+        See `bad_additive_components` for more details.
 
         >>> from functools import reduce
         >>> import operator
-        >>> list(Hosh(b"x").additive_decomposition(2))[0] == Hosh(b"x").additive_component(0, 2)
+        >>> list(Hosh(b"x").bad_additive_components(2))[0] == Hosh(b"x").bad_additive_component(0, 2)
         True
-        >>> list(Hosh(b"x").additive_decomposition(2))[1] == Hosh(b"x").additive_component(1, 2)
+        >>> list(Hosh(b"x").bad_additive_components(2))[1] == Hosh(b"x").bad_additive_component(1, 2)
         True
-        >>> list(Hosh(b"x").additive_decomposition(3))[0] == Hosh(b"x").additive_component(0, 3)
+        >>> list(Hosh(b"x").bad_additive_components(3))[0] == Hosh(b"x").bad_additive_component(0, 3)
         True
-        >>> list(Hosh(b"x").additive_decomposition(3))[1] == Hosh(b"x").additive_component(1, 3)
+        >>> list(Hosh(b"x").bad_additive_components(3))[1] == Hosh(b"x").bad_additive_component(1, 3)
         True
-        >>> list(Hosh(b"x").additive_decomposition(3))[2] == Hosh(b"x").additive_component(2, 3)
+        >>> list(Hosh(b"x").bad_additive_components(3))[2] == Hosh(b"x").bad_additive_component(2, 3)
         True
-        >>> list(Hosh(b"x").additive_decomposition(5))[0] == Hosh(b"x").additive_component(0, 5)
+        >>> list(Hosh(b"x").bad_additive_components(5))[0] == Hosh(b"x").bad_additive_component(0, 5)
         True
-        >>> list(Hosh(b"x").additive_decomposition(5))[1] == Hosh(b"x").additive_component(1, 5)
+        >>> list(Hosh(b"x").bad_additive_components(5))[1] == Hosh(b"x").bad_additive_component(1, 5)
         True
-        >>> list(Hosh(b"x").additive_decomposition(5))[2] == Hosh(b"x").additive_component(2, 5)
+        >>> list(Hosh(b"x").bad_additive_components(5))[2] == Hosh(b"x").bad_additive_component(2, 5)
         True
-        >>> list(Hosh(b"x").additive_decomposition(5))[4] == Hosh(b"x").additive_component(4, 5)
+        >>> list(Hosh(b"x").bad_additive_components(5))[4] == Hosh(b"x").bad_additive_component(4, 5)
         True
-        >>> list(Hosh(b"x").additive_decomposition(7))[0] == Hosh(b"x").additive_component(0, 7)
+        >>> list(Hosh(b"x").bad_additive_components(7))[0] == Hosh(b"x").bad_additive_component(0, 7)
         True
-        >>> list(Hosh(b"x").additive_decomposition(7))[1] == Hosh(b"x").additive_component(1, 7)
+        >>> list(Hosh(b"x").bad_additive_components(7))[1] == Hosh(b"x").bad_additive_component(1, 7)
         True
-        >>> list(Hosh(b"x").additive_decomposition(7))[2] == Hosh(b"x").additive_component(2, 7)
+        >>> list(Hosh(b"x").bad_additive_components(7))[2] == Hosh(b"x").bad_additive_component(2, 7)
         True
-        >>> list(Hosh(b"x").additive_decomposition(7))[4] == Hosh(b"x").additive_component(4, 7)
+        >>> list(Hosh(b"x").bad_additive_components(7))[4] == Hosh(b"x").bad_additive_component(4, 7)
         True
         """
         den = n * (n + 1) // 2
@@ -849,61 +854,153 @@ class Hosh:
             parc, rem = divmod(x + p, den)
             return (i * parc + toggle * rem) % p
 
-        return Hosh(list(fac(c) for c in self.cells))
+        return Hosh(list(fac(c) for c in self.cells), version=self.version)
 
-    def __getitem__(self, item):
-        """
-        Multiplicative decomposition based on values extracted from id+index
+    def components(self, start, stop, n, additive=False):
+        r"""
+        Pseudo"decomposition" based on the hosh of the current id concatenated as bytes to a given component index
+
+        Perform a multiplicative decomposition by default.
 
         Syntax:
-            Hosh(b"blob")[:n]           # Takes all 'n' components.
-            Hosh(b"blob")[index:n]      # Takes a single component out of 'n'.
+            Hosh(b"blob").components(i, m, n)   # Takes a slice of elements.
+            Hosh(b"blob")[i:m, n]               # Takes a slice of elements.
+            Hosh(b"blob")[i, n]                 # Takes element `i` out of `n` components.
+            Hosh(b"blob")[:n, n]                # All `n` elements.
+        Warning:
+            Hosh(b"blob")[-1]                   # Reverse element. Not to be confused with inverse element.
 
-        Use arbitrarily internally defined elements based on current id:
-        id+"-_1", id+"-2", ..., id+"-n"
 
-        The last element makes the multiplication x1*x2*...*xn match x:
+        The components are arbitrarily internally defined group elements based on current id as hashed bytes:
+        Hosh(id+"-1"), Hosh(id+"-2"), ..., Hosh(id+"-n")
+
+        The last element (xn) is the exception as it makes the product x1 * x2 * ... * xn match x:
         x1      = id+"-1" * x
          ...
         xn-1    = id+"-n-1" * x
         xn      = (id+"-1" * x * ... * id+"-n-1")-¹
+
+        Parameters
+        ==========
+        start
+            Start of a slice
+        stop
+            Stop of a slice
+        n
+            Desired total number of components
+        additive
+            Set up an additive decomposition
+
+        Returns
+        =======
+            List if hoshes
+
+        >>> from hosh import Hosh
         >>> a = Hosh(b"a")
-        >>> a[0:1] == a
+        >>> a[-1].rev == a
         True
-        >>> a[:1] == [a]
+        >>> a[0, 1][0] == a
         True
-        >>> a[:3][0] * a[:3][1] * a[:3][2] == a
+        >>> a[0:, 1][0] == a
         True
-        >>> a[0:3] * a[1:3] * a[2:3] == a
+        >>> a[:1, 1][0] == a
+        True
+        >>> a[0:1, 1][0] == a
+        True
+        >>> from operator import mul
+        >>> reduce(mul, a[:, 3]) == a
+        True
+        >>> [x.id for x in a[:, 3]]
+        ['Bd6Axil5pFSp15HUBz8eCujvu3gBsEk6XMpRsMNo', '32MloLPcivDbbPMCJn1RBY31aNZ6z-Dqnt4vQhot', 'la3xnZmlhn3lFBAnvWw-UWAvK.2hk-QqUNFYAs3e']
+        >>> a[:, 3][0] * a[:, 3][1] * a[:, 3][2] == a
+        True
+        >>> a[0, 3] * a[1, 3] * a[2, 3] == a
+        True
+        >>> a.id
+        'cIXBKPediDiOKabeZ6SthD04rnzaquNXaAEhSud4'
+        >>> from operator import add, mul
+        >>> from functools import reduce
+        >>> print("\n".join(x.id for x in a.components(0, 7, 7)))
+        Bd6Axil5pFSp15HUBz8eCujvu3gBsEk6XMpRsMNo
+        32MloLPcivDbbPMCJn1RBY31aNZ6z-Dqnt4vQhot
+        Y2JlyuF8.KJc0DvvcIivLA5uLYloF7HN9ovO14Sq
+        6.F-NB-G4vBXs7evbBImex9x3foNi85Ca7wDb1c3
+        tZmUsjVcZAGTajUOzsSNrr7a7BQVNSiA6xaiPEYf
+        iCLMdAlduXvUtK1.awng0D0YP49kV8Cit7OLXyab
+        BA6UvITsIN822llT9eErc1R0rmf.ARbc0adwEbWk
+        >>> reduce(mul, a.components(0, 2, 7)) * reduce(mul, a.components(2, 3, 7)) * reduce(mul, a.components(3, 7, 7)) == a
+        True
+        >>> reduce(mul, a.components(0, 7, 7)) == a
         True
 
+        >>> print("\n".join(x.id for x in a.components(0, 7, 7, additive=True)))
+        Bd6Axil5pFSp15HUBz8eCujvu3gBsEk6XMpRsMNo
+        32MloLPcivDbbPMCJn1RBY31aNZ6z-Dqnt4vQhot
+        Y2JlyuF8.KJc0DvvcIivLA5uLYloF7HN9ovO14Sq
+        6.F-NB-G4vBXs7evbBImex9x3foNi85Ca7wDb1c3
+        tZmUsjVcZAGTajUOzsSNrr7a7BQVNSiA6xaiPEYf
+        iCLMdAlduXvUtK1.awng0D0YP49kV8Cit7OLXyab
+        7jJmsfrPpa2CeeYCAiByF3HW2J9.ARbc0adwEbWk
+        >>> reduce(add, a.components(0, 2, 7, additive=True)) + reduce(add, a.components(2, 3, 7, additive=True)) + reduce(add, a.components(3, 7, 7, additive=True)) == a
+        True
+        >>> reduce(add, a.components(0, 7, 7, additive=True)) == a
+        True
         """
-        if not isinstance(item, slice) or item.step is not None or (n := item.stop) is None:  # pragma: no cover
-            raise Exception("Wrong syntax, expected: hosh[:n] or hosh[index:n]")
-        if (index := item.start) is not None:
-            if index >= n or index < 0:  # pragma: no cover
-                raise Exception(f"Wrong values: i ({index}) >= n ({n}) (or negative)")
+        if stop > n:  # pragma: no cover
+            raise Exception(f"Wrong value:   stop=`{stop}`  >=  n=`{n}`")
+        acc = self.ø
+        operator = add if additive else mul
+        for i in range(0, stop):
+            if stop == n and i == stop - 1:
+                break
+            if (t := (i, n, additive)) not in self._composition_memo:
+                self._composition_memo[t] = Hosh(f"{self.id}-{i}".encode(), version=self.version)
+                if len(self._composition_memo) > self.components_cache_size:  # pragma: no cover
+                    first = next(iter(self._composition_memo))
+                    del self._composition_memo[first]
+            h = self._composition_memo[t]
+            acc = operator(acc, h)
+            if i >= start:
+                yield h
+        if stop == n:
+            inv = Hosh(cellsinv(acc.cells, self.p, additive), version=self.version)
+            last = operator(inv, self)
+            yield last
+
+    def __getitem__(self, item: Union[int, tuple]):
+        """
+        Reverse element:    Hosh(b"blob")[-1]
+        """
+        if item == -1:
+            return self.rev
+        if not isinstance(item, tuple) or len(item) != 2:  # pragma: no cover
+            raise Exception("Wrong syntax, tuple or `-1` expected: hosh[-1] or hosh[i, n] or hosh[l:m, n]")
+        slc, n = item
+        if n <= 0:  # pragma: no cover
+            raise Exception(f"Wrong value: n={n}  <=  0")
+
+        if isinstance(idx := slc, int):
+            if idx < n - 1:
+                return Hosh(f"{self.id}-{idx}".encode())
             if n == 1:
-                return self
-            if index < n - 1:
-                return Hosh(f"{self.id}-{index}".encode())
-            return ~self.composition_nolast(n) * self
+                return [self]
+            if idx == n - 1:
+                return list(self.components(0, n, n))[idx]
+            raise Exception(f"Wrong value: i={slc}  >  n={n}")  # pragma: no cover
+
+        if not isinstance(slc, slice) or slc.step is not None:  # pragma: no cover
+            raise Exception(f"Wrong syntax. Simple slice or index expected as first tuple item, not `{slc}`: hosh[i, n] or hosh[l:m, n]")
+
+        if (start := slc.start) is None:
+            start = 0
+        if (stop := slc.stop) is None:
+            stop = n
+
+        if start > n or start < 0:  # pragma: no cover
+            raise Exception(f"Wrong values, expected: 0  <=  i={start}  <=  n={n}")
         if n == 1:
             return [self]
-        if n <= 0:  # pragma: no cover
-            raise Exception(f"Wrong value: n ({n}) <= 0")
-        lst = [Hosh(f"{self.id}-{i}".encode()) for i in range(n - 1)]
-        lst.append(~reduce(operator.mul, lst) * self)
-        return lst
-
-    def composition_nolast(self, n):
-        if n not in self._composition_nolast:
-            if len(self._composition_nolast) > 5:  # pragma: no cover
-                first = next(iter(self._composition_nolast))
-                del self._composition_nolast[first]
-            gen = (Hosh(f"{self.id}-{i}".encode()) for i in range(n - 1))
-            self._composition_nolast[n] = reduce(operator.mul, gen)
-        return self._composition_nolast[n]
+        return list(self.components(start, stop, n))
 
     @property
     def bits(self):

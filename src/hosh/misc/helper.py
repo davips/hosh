@@ -34,13 +34,13 @@ class Helper:
     version: str
 
     def __call__(self, blob, etype="ordered"):
-        return Hosh(blob, etype, self.version)
+        return Hosh(blob, etype=etype, version=self.version)
 
     def u(self, blob):
-        return Hosh(blob, "unordered", self.version)
+        return Hosh(blob, etype="unordered", version=self.version)
 
     def h(self, blob):
-        return Hosh(blob, "hybrid", self.version)
+        return Hosh(blob, etype="hybrid", version=self.version)
 
     fromid = Hosh.fromid
     fromn = Hosh.fromn
