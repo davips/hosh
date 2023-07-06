@@ -1162,7 +1162,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
         &gt;&gt;&gt; a[-1].rev == a
         True
-        &gt;&gt;&gt; a[0, 1][0] == a
+        &gt;&gt;&gt; a[0, 1] == a
         True
         &gt;&gt;&gt; a[0:, 1][0] == a
         True
@@ -1246,7 +1246,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
             if idx &lt; n - 1:
                 return Hosh(f&#34;{self.id}-{idx}&#34;.encode())
             if n == 1:
-                return [self]
+                return self
             if idx == n - 1:
                 return list(self.components(0, n, n))[idx]
             raise Exception(f&#34;Wrong value: i={slc}  &gt;  n={n}&#34;)  # pragma: no cover
@@ -2212,7 +2212,7 @@ Set up an additive decomposition</p>
 &gt;&gt;&gt; a = Hosh(b&quot;a&quot;)
 &gt;&gt;&gt; a[-1].rev == a
 True
-&gt;&gt;&gt; a[0, 1][0] == a
+&gt;&gt;&gt; a[0, 1] == a
 True
 &gt;&gt;&gt; a[0:, 1][0] == a
 True
@@ -2306,7 +2306,7 @@ True
     &gt;&gt;&gt; a = Hosh(b&#34;a&#34;)
     &gt;&gt;&gt; a[-1].rev == a
     True
-    &gt;&gt;&gt; a[0, 1][0] == a
+    &gt;&gt;&gt; a[0, 1] == a
     True
     &gt;&gt;&gt; a[0:, 1][0] == a
     True
