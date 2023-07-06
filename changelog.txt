@@ -1,8 +1,1 @@
-Change meaning of -hosh. Now it is the additive inverse.
-Rename multiplicative_component to power_component
-Rename additive_decomposition to bad_additive_components
-Rename additive_component to bad_additive_component
-Add components() for Pseudo"decomposition" based on the hosh of the current id concatenated as bytes to a given component index
-Support slices; hosh[-1] means 'reversed hosh' (this is not the inverse!) as we cannot define a component without more information.
-Replace h.rev by the more robust cell-based scheme
-Impl h.bits
+Fix component getter syntax to not return a list: a[0, 1] == a

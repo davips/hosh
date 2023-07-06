@@ -899,7 +899,7 @@ class Hosh:
         >>> a = Hosh(b"a")
         >>> a[-1].rev == a
         True
-        >>> a[0, 1][0] == a
+        >>> a[0, 1] == a
         True
         >>> a[0:, 1][0] == a
         True
@@ -983,7 +983,7 @@ class Hosh:
             if idx < n - 1:
                 return Hosh(f"{self.id}-{idx}".encode())
             if n == 1:
-                return [self]
+                return self
             if idx == n - 1:
                 return list(self.components(0, n, n))[idx]
             raise Exception(f"Wrong value: i={slc}  >  n={n}")  # pragma: no cover
