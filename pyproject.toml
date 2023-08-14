@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hosh"
-version = "3.230705.2"
+version = "3.230705.3"
 description = "Predictable Operable HaSH-based identifiers"
 authors = ["davips <dpsabc@gmail.com>"]
 license = "GPL"
@@ -11,7 +11,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-wheel = "^0.40.0"
 blake3 = "^0.3.3"
 colored = "1.4.2" # Newer minor version has breaking changes.
 ansi2html = "^1.6.0"
