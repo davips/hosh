@@ -42,7 +42,7 @@ from hosh.theme import HTML, ANSI, BW
 
 
 class Hosh:
-    """
+    r"""
     Operable hash.
 
     Generate a Hosh object from a binary content or a list of 6 ints.
@@ -109,6 +109,12 @@ class Hosh:
     >>> (x ** y) // y == x
     True
     >>> f + e - x == ø - x + e + f  # Alternative (always unordered, i.e., form an Abelian group) operation
+    True
+    >>> import pickle
+    >>> d = pickle.dumps(x, protocol=5)
+    >>> d
+    b'\x80\x05\x95j\x00\x00\x00\x00\x00\x00\x00\x8c\x08builtins\x94\x8c\x07getattr\x94\x93\x94\x8c\nhosh.hosh_\x94\x8c\x04Hosh\x94\x93\x94\x8c\x06fromid\x94\x86\x94R\x94\x8c(ZN_60eec3e6c7b68087329e16b581401a6bb2b1f\x94\x85\x94R\x94.'
+    >>> pickle.loads(d) == x
     True
 
     Parameters
@@ -1017,3 +1023,6 @@ class Hosh:
         if self._bits is None:
             self._bits = '{:b}'.format(self.n).rjust(self.digits * 6, "0")
         return self._bits
+
+    def __reduce__(self):
+        return self.fromid, (self.id,)

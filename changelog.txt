@@ -1,1 +1,1 @@
-Fix component getter syntax to not return a list: a[0, 1] == a
+Implement serialization
