@@ -286,6 +286,12 @@ True
 True
 &gt;&gt;&gt; f + e - x == ø - x + e + f  # Alternative (always unordered, i.e., form an Abelian group) operation
 True
+&gt;&gt;&gt; import pickle
+&gt;&gt;&gt; d = pickle.dumps(x, protocol=5)
+&gt;&gt;&gt; d
+b'\x80\x05\x95j\x00\x00\x00\x00\x00\x00\x00\x8c\x08builtins\x94\x8c\x07getattr\x94\x93\x94\x8c\nhosh.hosh_\x94\x8c\x04Hosh\x94\x93\x94\x8c\x06fromid\x94\x86\x94R\x94\x8c(ZN_60eec3e6c7b68087329e16b581401a6bb2b1f\x94\x85\x94R\x94.'
+&gt;&gt;&gt; pickle.loads(d) == x
+True
 </code></pre>
 <h2 id="parameters">Parameters</h2>
 <dl>
@@ -305,7 +311,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Hosh:
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Operable hash.
 
     Generate a Hosh object from a binary content or a list of 6 ints.
@@ -372,6 +378,12 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
     &gt;&gt;&gt; (x ** y) // y == x
     True
     &gt;&gt;&gt; f + e - x == ø - x + e + f  # Alternative (always unordered, i.e., form an Abelian group) operation
+    True
+    &gt;&gt;&gt; import pickle
+    &gt;&gt;&gt; d = pickle.dumps(x, protocol=5)
+    &gt;&gt;&gt; d
+    b&#39;\x80\x05\x95j\x00\x00\x00\x00\x00\x00\x00\x8c\x08builtins\x94\x8c\x07getattr\x94\x93\x94\x8c\nhosh.hosh_\x94\x8c\x04Hosh\x94\x93\x94\x8c\x06fromid\x94\x86\x94R\x94\x8c(ZN_60eec3e6c7b68087329e16b581401a6bb2b1f\x94\x85\x94R\x94.&#39;
+    &gt;&gt;&gt; pickle.loads(d) == x
     True
 
     Parameters
@@ -1279,7 +1291,10 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#34;&#34;&#34;
         if self._bits is None:
             self._bits = &#39;{:b}&#39;.format(self.n).rjust(self.digits * 6, &#34;0&#34;)
-        return self._bits</code></pre>
+        return self._bits
+
+    def __reduce__(self):
+        return self.fromid, (self.id,)</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
