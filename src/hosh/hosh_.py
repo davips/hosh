@@ -653,7 +653,7 @@ class Hosh:
         cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
-    def __sub__(self, other):
+    def __sub__(self, other):  #TODO: check if a - b  here is different from a + (-b) ?
         """Matrix subtraction modulo p, keeping unidiagonal"""
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented
