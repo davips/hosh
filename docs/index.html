@@ -922,7 +922,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
-    def __sub__(self, other):
+    def __sub__(self, other):  #TODO: check if a - b  here is different from a + (-b) ?
         &#34;&#34;&#34;Matrix subtraction modulo p, keeping unidiagonal&#34;&#34;&#34;
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented

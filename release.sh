@@ -32,7 +32,7 @@ read -p "press enter"
 #################################################################################
 echo ">>>>>>   install project package for better IDE class hierarchy view <<<<<<<<"
 echo "          (this removes duplicates from IDE class hierarchy)"
-source /home/davi/.cache/pypoetry/virtualenvs/hosh-pIwr8ah1-py3.10/bin/activate
+$(poetry env activate)
 pip install .
 #################################################################################
 #################################################################################
