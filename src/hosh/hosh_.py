@@ -761,7 +761,7 @@ class Hosh:
             other = Hosh(other, etype=self.etype_inducer, version=self.version)
         elif isinstance(other, int):
             other = Hosh.fromn(other, version=self.version)
-        elif isinstance(other, (tuple | list)):
+        elif isinstance(other, (tuple, list)):
             other = Hosh(other, version=self.version)
         elif not isinstance(other, Hosh):
             return NotImplemented

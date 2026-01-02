@@ -1,1 +1,6 @@
-Fix UT version check for tensorAdopt tuple for cells instead of list
+Fix typo: (tuple | list)
+Remove twine from deps
+
+3.260103.2
+Fix UT version check for tensor
+Adopt tuple for cells instead of list
