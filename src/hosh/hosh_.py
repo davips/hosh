@@ -40,7 +40,6 @@ from hosh.misc.exception import (
 from hosh.misc.math import cellsmul, cellsinv, cells2int, int2cells, cellspow, cellsroot
 from hosh.theme import HTML, ANSI, BW
 
-
 class Hosh:
     r"""
     Operable hash.
@@ -382,8 +381,6 @@ class Hosh:
         """
         Create a Hosh object representing the given int.
 
-        Default 'p' is according to version UT64.4.
-
         Usage:
 
         >>> h = Hosh.fromn(7647544756746324134134)
@@ -403,6 +400,47 @@ class Hosh:
         if n > order:
             raise ElementTooHigh(f"Element outside allowed range: {n} >= {order}")
         return Hosh(int2cells(n, p), version=version)
+
+    @classmethod
+    def fromtensor(cls, tensor, device=None, version=UT40_4):
+        """
+        Create a Hosh object representing the given tensor.
+
+        Vectorized pure-Torch implementation producing 6 ints from tensor T.
+        If `device` is provided and is a CUDA device, this can run on GPU.
+
+        Usage:
+        TODO
+
+        Parameters
+        ----------
+        tensor
+        device
+        version
+
+        Returns
+        -------
+        A new Hosh object
+        """
+        import torch
+        arr = tensor.reshape(-1).to(torch.int64)
+        if device is not None:
+            arr = arr.to(device)
+        if arr.numel() == 0:
+            return Hosh([0] * 6, version=version)
+        # 6 distinct multipliers/adds (int64) placed on the same device as arr
+        mults = torch.tensor([1315423911, 2654435761, 97531, 1000003, 1000000007, 1610612741], dtype=torch.int64, device=arr.device).unsqueeze(1)
+        adds = torch.tensor([2654435761, 97531, 1000003, 1000000007, 1610612741, 1315423911], dtype=torch.int64, device=arr.device).unsqueeze(1)
+        mask64 = (1 << 64) - 1
+        mixed = arr.unsqueeze(0) * mults
+        mixed = mixed + adds
+        mixed = mixed ^ (mixed >> 23)
+        sums = mixed.sum(dim=1)
+        out = []
+        for s in sums:
+            s_int = int(s.item()) & mask64
+            out.append(int(s_int % version.p))
+        return Hosh(out, version=version)
 
     @property
     def n(self):
@@ -653,7 +691,7 @@ class Hosh:
         cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
-    def __sub__(self, other):  #TODO: check if a - b  here is different from a + (-b) ?
+    def __sub__(self, other):  # TODO: check if a - b  here is different from a + (-b) ?
         """Matrix subtraction modulo p, keeping unidiagonal"""
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented
