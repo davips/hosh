@@ -15,7 +15,7 @@ blake3 = "^1.0.4"
 colored = "1.4.2" # Newer minor version has breaking changes.
 ansi2html = "^1.6.0"
 bs4 = "^0.0.1"
-twine = "^6.1.0"
+#twine = "^6.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pdoc3 = "^0.10.0"
