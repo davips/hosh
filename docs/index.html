@@ -651,8 +651,6 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         &#34;&#34;&#34;
         Create a Hosh object representing the given int.
 
-        Default &#39;p&#39; is according to version UT64.4.
-
         Usage:
 
         &gt;&gt;&gt; h = Hosh.fromn(7647544756746324134134)
@@ -672,6 +670,47 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         if n &gt; order:
             raise ElementTooHigh(f&#34;Element outside allowed range: {n} &gt;= {order}&#34;)
         return Hosh(int2cells(n, p), version=version)
+
+    @classmethod
+    def fromtensor(cls, tensor, device=None, version=UT40_4):
+        &#34;&#34;&#34;
+        Create a Hosh object representing the given tensor.
+
+        Vectorized pure-Torch implementation producing 6 ints from tensor T.
+        If `device` is provided and is a CUDA device, this can run on GPU.
+
+        Usage:
+        TODO
+
+        Parameters
+        ----------
+        tensor
+        device
+        version
+
+        Returns
+        -------
+        A new Hosh object
+        &#34;&#34;&#34;
+        import torch
+        arr = tensor.reshape(-1).to(torch.int64)
+        if device is not None:
+            arr = arr.to(device)
+        if arr.numel() == 0:
+            return Hosh([0] * 6, version=version)
+        # 6 distinct multipliers/adds (int64) placed on the same device as arr
+        mults = torch.tensor([1315423911, 2654435761, 97531, 1000003, 1000000007, 1610612741], dtype=torch.int64, device=arr.device).unsqueeze(1)
+        adds = torch.tensor([2654435761, 97531, 1000003, 1000000007, 1610612741, 1315423911], dtype=torch.int64, device=arr.device).unsqueeze(1)
+        mask64 = (1 &lt;&lt; 64) - 1
+        mixed = arr.unsqueeze(0) * mults
+        mixed = mixed + adds
+        mixed = mixed ^ (mixed &gt;&gt; 23)
+        sums = mixed.sum(dim=1)
+        out = []
+        for s in sums:
+            s_int = int(s.item()) &amp; mask64
+            out.append(int(s_int % version.p))
+        return Hosh(out, version=version)
 
     @property
     def n(self):
@@ -922,7 +961,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
-    def __sub__(self, other):  #TODO: check if a - b  here is different from a + (-b) ?
+    def __sub__(self, other):  # TODO: check if a - b  here is different from a + (-b) ?
         &#34;&#34;&#34;Matrix subtraction modulo p, keeping unidiagonal&#34;&#34;&#34;
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented
@@ -1408,7 +1447,6 @@ def fromid(cls, id):
 </code></dt>
 <dd>
 <div class="desc"><p>Create a Hosh object representing the given int.</p>
-<p>Default 'p' is according to version UT64.4.</p>
 <p>Usage:</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; h = Hosh.fromn(7647544756746324134134)
 &gt;&gt;&gt; h.id
@@ -1435,8 +1473,6 @@ def fromn(cls, n: int, version=UT40_4):
     &#34;&#34;&#34;
     Create a Hosh object representing the given int.
 
-    Default &#39;p&#39; is according to version UT64.4.
-
     Usage:
 
     &gt;&gt;&gt; h = Hosh.fromn(7647544756746324134134)
@@ -1456,6 +1492,75 @@ def fromn(cls, n: int, version=UT40_4):
     if n &gt; order:
         raise ElementTooHigh(f&#34;Element outside allowed range: {n} &gt;= {order}&#34;)
     return Hosh(int2cells(n, p), version=version)</code></pre>
+</details>
+</dd>
+<dt id="hosh.Hosh.fromtensor"><code class="name flex">
+<span>def <span class="ident">fromtensor</span></span>(<span>tensor, device=None, version=Group(p=1099511627689, p4=1461501636868331575725436266114840805196834679841, p6=1766847063939562670646036165286872353986524172769430561878277294118845361, digits=40, bytes=30, firstp='0_100000000_____________________________', lastp='f_8afffffff_____________________________', firstp4='00_1000000000000000000000000000000000000', lastp4='.._87c2a630003eec7dffff561b0000004aeffff', firstp6='1000000000000000000000000000000000000000', lastp6='g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....'))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a Hosh object representing the given tensor.</p>
+<p>Vectorized pure-Torch implementation producing 6 ints from tensor T.
+If <code>device</code> is provided and is a CUDA device, this can run on GPU.</p>
+<p>Usage:
+TODO</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>tensor</code></strong></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>device</code></strong></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>version</code></strong></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>A new <a title="hosh.Hosh" href="#hosh.Hosh">Hosh</a> object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def fromtensor(cls, tensor, device=None, version=UT40_4):
+    &#34;&#34;&#34;
+    Create a Hosh object representing the given tensor.
+
+    Vectorized pure-Torch implementation producing 6 ints from tensor T.
+    If `device` is provided and is a CUDA device, this can run on GPU.
+
+    Usage:
+    TODO
+
+    Parameters
+    ----------
+    tensor
+    device
+    version
+
+    Returns
+    -------
+    A new Hosh object
+    &#34;&#34;&#34;
+    import torch
+    arr = tensor.reshape(-1).to(torch.int64)
+    if device is not None:
+        arr = arr.to(device)
+    if arr.numel() == 0:
+        return Hosh([0] * 6, version=version)
+    # 6 distinct multipliers/adds (int64) placed on the same device as arr
+    mults = torch.tensor([1315423911, 2654435761, 97531, 1000003, 1000000007, 1610612741], dtype=torch.int64, device=arr.device).unsqueeze(1)
+    adds = torch.tensor([2654435761, 97531, 1000003, 1000000007, 1610612741, 1315423911], dtype=torch.int64, device=arr.device).unsqueeze(1)
+    mask64 = (1 &lt;&lt; 64) - 1
+    mixed = arr.unsqueeze(0) * mults
+    mixed = mixed + adds
+    mixed = mixed ^ (mixed &gt;&gt; 23)
+    sums = mixed.sum(dim=1)
+    out = []
+    for s in sums:
+        s_int = int(s.item()) &amp; mask64
+        out.append(int(s_int % version.p))
+    return Hosh(out, version=version)</code></pre>
 </details>
 </dd>
 </dl>
@@ -2645,6 +2750,7 @@ voh8t1KrYmzCqpyrUO9.5QbGdouoZsnExarMSa34
 <li><code><a title="hosh.Hosh.etype_inducer" href="#hosh.Hosh.etype_inducer">etype_inducer</a></code></li>
 <li><code><a title="hosh.Hosh.fromid" href="#hosh.Hosh.fromid">fromid</a></code></li>
 <li><code><a title="hosh.Hosh.fromn" href="#hosh.Hosh.fromn">fromn</a></code></li>
+<li><code><a title="hosh.Hosh.fromtensor" href="#hosh.Hosh.fromtensor">fromtensor</a></code></li>
 <li><code><a title="hosh.Hosh.html" href="#hosh.Hosh.html">html</a></code></li>
 <li><code><a title="hosh.Hosh.id" href="#hosh.Hosh.id">id</a></code></li>
 <li><code><a title="hosh.Hosh.idc" href="#hosh.Hosh.idc">idc</a></code></li>
