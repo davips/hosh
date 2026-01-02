@@ -693,7 +693,7 @@ UT40_4 is recommended and default, since it is the most compatible with other sy
         -------
         A new Hosh object
         &#34;&#34;&#34;
-        if version != &#34;UT40_4&#34;:
+        if version != UT40_4:
             raise NotImplementedError(f&#34;Unsupported version: {version}&#34;)
         import torch
         arr = tensor.reshape(-1).to(torch.int64)
@@ -1543,7 +1543,7 @@ def fromtensor(cls, tensor, device=None, version=UT40_4):
     -------
     A new Hosh object
     &#34;&#34;&#34;
-    if version != &#34;UT40_4&#34;:
+    if version != UT40_4:
         raise NotImplementedError(f&#34;Unsupported version: {version}&#34;)
     import torch
     arr = tensor.reshape(-1).to(torch.int64)
