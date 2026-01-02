@@ -410,7 +410,7 @@ class Hosh:
         If `device` is provided and is a CUDA device, this can run on GPU.
 
         Usage:
-        TODO
+        TODO: add example and generalize to other versions other than UT40_4 (need to adjust null case, multipliers, adds, and mod p)
 
         Parameters
         ----------
