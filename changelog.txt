@@ -1,1 +1,1 @@
-Adopt tuple for cells instead of list
+Fix UT version check for tensorAdopt tuple for cells instead of list

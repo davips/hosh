@@ -423,7 +423,7 @@ class Hosh:
         -------
         A new Hosh object
         """
-        if version != "UT40_4":
+        if version != UT40_4:
             raise NotImplementedError(f"Unsupported version: {version}")
         import torch
         arr = tensor.reshape(-1).to(torch.int64)
