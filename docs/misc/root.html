@@ -53,7 +53,7 @@ def root(m, k, mod):
     &#34;&#34;&#34;
     &gt;&gt;&gt; from hosh.misc.math import cellsroot, cellsmul, cellspow
     &gt;&gt;&gt; p = 1099511627689
-    &gt;&gt;&gt; a = [356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983]
+    &gt;&gt;&gt; a = (356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983)
     &gt;&gt;&gt; for k in range(1, 5):
     ...     r = cellsroot(a, k, p)
     ...     a == cellspow(r, k, p)
@@ -82,7 +82,7 @@ def root(m, k, mod):
     cells[5] = (
         (m[5] - c1 * cells[1] * cells[2] - c1 * cells[4] * cells[0] - c2 * cells[1] * cells[3] * cells[0]) * divk
     ) % mod
-    return cells</code></pre>
+    return tuple(cells)</code></pre>
 </details>
 </section>
 <section>
@@ -98,7 +98,7 @@ def root(m, k, mod):
 <dd>
 <div class="desc"><pre><code class="language-python-repl">&gt;&gt;&gt; from hosh.misc.math import cellsroot, cellsmul, cellspow
 &gt;&gt;&gt; p = 1099511627689
-&gt;&gt;&gt; a = [356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983]
+&gt;&gt;&gt; a = (356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983)
 &gt;&gt;&gt; for k in range(1, 5):
 ...     r = cellsroot(a, k, p)
 ...     a == cellspow(r, k, p)
@@ -115,7 +115,7 @@ True
     &#34;&#34;&#34;
     &gt;&gt;&gt; from hosh.misc.math import cellsroot, cellsmul, cellspow
     &gt;&gt;&gt; p = 1099511627689
-    &gt;&gt;&gt; a = [356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983]
+    &gt;&gt;&gt; a = (356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983)
     &gt;&gt;&gt; for k in range(1, 5):
     ...     r = cellsroot(a, k, p)
     ...     a == cellspow(r, k, p)
@@ -144,7 +144,7 @@ True
     cells[5] = (
         (m[5] - c1 * cells[1] * cells[2] - c1 * cells[4] * cells[0] - c2 * cells[1] * cells[3] * cells[0]) * divk
     ) % mod
-    return cells</code></pre>
+    return tuple(cells)</code></pre>
 </details>
 </dd>
 </dl>
