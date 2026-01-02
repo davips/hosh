@@ -33,7 +33,7 @@ def int2cells(num, mod):
     Convert an integer to cells representing a 4x4 unitriangular matrix
 
     >>> e = [42821,772431,428543,443530,42121,7213]
-    >>> e == int2cells(cells2int(e,4294967291), 4294967291)
+    >>> tuple(e) == int2cells(cells2int(e,4294967291), 4294967291)
     True
     >>> try:
     ...     int2cells(-1, 10)
@@ -50,16 +50,15 @@ def int2cells(num, mod):
     -------
 
     """
-    m = [0, 0, 0, 0, 0, 0]
-    num, m[5] = divmod(num, mod)
-    num, m[4] = divmod(num, mod)
-    num, m[3] = divmod(num, mod)
-    num, m[2] = divmod(num, mod)
-    num, m[1] = divmod(num, mod)
-    rest, m[0] = divmod(num, mod)
+    num, m5 = divmod(num, mod)
+    num, m4 = divmod(num, mod)
+    num, m3 = divmod(num, mod)
+    num, m2 = divmod(num, mod)
+    num, m1 = divmod(num, mod)
+    rest, m0 = divmod(num, mod)
     if rest != 0:  # pragma: no cover
         raise Exception(f"Number {num} too large for given mod {mod}")
-    return m
+    return m0, m1, m2, m3, m4, m5
 
 
 def cells2int(m, mod):
@@ -98,10 +97,10 @@ def cellsmul(a, b, mod):
     0  0  0  1
 
     >>> a, b = [51,18340,56,756,456,344], [781,2340,9870,1234,9134,3134]
-    >>> cellsmul(b, cellsinv(b, 4294967291), 4294967291) == [0,0,0,0,0,0]
+    >>> cellsmul(b, cellsinv(b, 4294967291), 4294967291) == (0,0,0,0,0,0)
     True
     >>> c = cellsmul(a, b, 4294967291)
-    >>> cellsmul(c, cellsinv(b, 4294967291), 4294967291) == a
+    >>> cellsmul(c, cellsinv(b, 4294967291), 4294967291) == tuple(a)
     True
 
     Parameters
@@ -117,14 +116,14 @@ def cellsmul(a, b, mod):
     -------
         The list that corresponds to the resulting element from multiplication
     """
-    return [
+    return (
         (a[0] + b[0]) % mod,
         (a[1] + b[1]) % mod,
         (a[2] + b[2] + a[3] * b[0]) % mod,
         (a[3] + b[3]) % mod,
         (a[4] + b[4] + a[1] * b[3]) % mod,
         (a[5] + b[5] + a[1] * b[2] + a[4] * b[0]) % mod,
-    ]
+    )
 
 
 def cellsinv(m, mod, additive=False):
@@ -142,15 +141,15 @@ def cellsinv(m, mod, additive=False):
 
     >>> from hosh.misc.math import cellsinv
     >>> e = [42821,772431,428543,443530,42121,7213]
-    >>> cellsinv(cellsinv(e, 4294967291), 4294967291) == e
+    >>> cellsinv(cellsinv(e, 4294967291), 4294967291) == tuple(e)
     True
 
-    >>> cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == e
+    >>> cellsinv(cellsinv(e, 4294967291, additive=True), 4294967291, additive=True) == tuple(e)
     True
 
     >>> e = [1,2,3,4,5,6]
     >>> cellsinv(e, 7, additive=True)
-    [6, 5, 4, 3, 2, 1]
+    (6, 5, 4, 3, 2, 1)
 
     Parameters
     ----------
@@ -166,19 +165,19 @@ def cellsinv(m, mod, additive=False):
         The list that corresponds to the inverse element
     """
     if additive:
-        return [(mod - m[0]) % mod, (mod - m[1]) % mod, (mod - m[2]) % mod, (mod - m[3]) % mod, (mod - m[4]) % mod, (mod - m[5]) % mod]
-    return [
+        return (mod - m[0]) % mod, (mod - m[1]) % mod, (mod - m[2]) % mod, (mod - m[3]) % mod, (mod - m[4]) % mod, (mod - m[5]) % mod
+    return (
         -m[0] % mod,
         -m[1] % mod,
         (m[3] * m[0] - m[2]) % mod,
         -m[3] % mod,
         (m[1] * m[3] - m[4]) % mod,
         (m[1] * m[2] + m[4] * m[0] - m[1] * m[3] * m[0] - m[5]) % mod,
-    ]
+    )
 
 
 def cellspow(m, k, mod):
-    result_cells = [0, 0, 0, 0, 0, 0]
+    result_cells = 0, 0, 0, 0, 0, 0
     for i in range(0, k):
         result_cells = cellsmul(result_cells, m, mod)
     return result_cells

@@ -25,7 +25,7 @@ def root(m, k, mod):
     """
     >>> from hosh.misc.math import cellsroot, cellsmul, cellspow
     >>> p = 1099511627689
-    >>> a = [356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983]
+    >>> a = (356565433747, 1065474654747, 3646565647, 245465626545, 778334555738, 84633966983)
     >>> for k in range(1, 5):
     ...     r = cellsroot(a, k, p)
     ...     a == cellspow(r, k, p)
@@ -54,4 +54,4 @@ def root(m, k, mod):
     cells[5] = (
         (m[5] - c1 * cells[1] * cells[2] - c1 * cells[4] * cells[0] - c2 * cells[1] * cells[3] * cells[0]) * divk
     ) % mod
-    return cells
+    return tuple(cells)

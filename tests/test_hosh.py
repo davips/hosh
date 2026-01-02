@@ -64,11 +64,11 @@ class TestLdict(TestCase):
 
         a = ø * [6, 5, 4, 3, 2, 1]
         b = ø * [9, 8, 7, 6, 5, 4]
-        self.assertEqual([15, 13, 11, 9, 7, 5], (a + b).cells)
+        self.assertEqual((15, 13, 11, 9, 7, 5), (a + b).cells)
         self.assertEqual(repr(a * b / b), repr(a))
 
-        self.assertEqual([6, 8, 7, 9, 5, 4], (+b).cells)
-        self.assertEqual([1099511627680, 1099511627681, 1099511627682, 1099511627683, 1099511627684, 1099511627685], (-b).cells)
+        self.assertEqual((6, 8, 7, 9, 5, 4), (+b).cells)
+        self.assertEqual((1099511627680, 1099511627681, 1099511627682, 1099511627683, 1099511627684, 1099511627685), (-b).cells)
         c = ø * [0, 0, 7, 6, 5, 4]
         d = ø * [0, 0, 3, 2, 5, 8]
         e = ø * [0, 0, 8, 3, 4, 7]

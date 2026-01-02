@@ -119,7 +119,7 @@ class Hosh:
     Parameters
     ----------
     content
-        Binary content to be hashed, or a list of six integers
+        Binary content to be hashed, or a tuple of six integers
     etype
         ordered, hybrid, unordered
         According to the subset of the desired element: Z, H\\Z or G\\H
@@ -141,9 +141,10 @@ class Hosh:
         self.version = version
         self.p, self.p4, self.p6, self.digits, self.bytes, _, _, _, _, _, _ = version
         self._composition_memo = {}
-        if isinstance(content, list):
+        if isinstance(content, (list, tuple)):
+            content = tuple(content)
             if etype != "default:ordered":
-                raise DanglingEtype(f"Cannot set etype={etype} when providing cells ({content}).")
+                raise DanglingEtype(f"Cannot set etype={etype} when providing cells {content}.")
             if max(content) >= self.p:
                 raise CellValueTooHigh(f"A cell value exceeds the limit for the group: {max(content)} >= {self.p}")
             self.cells = content
@@ -230,9 +231,9 @@ class Hosh:
         >>> Hosh.fromid(groups[40].firstp4).rev.id, Hosh.fromid(groups[40].lastp4).rev.id
         ('00_9ed100000015ffffffff00000000000000000', '.._87c2a630003eec7dffff561b0000004aeffff')
         >>> Hosh.fromid(groups[40].firstp4).cells, Hosh.fromid(groups[40].lastp4).cells
-        ([0, 0, 0, 0, 1, 0], [0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        ((0, 0, 0, 0, 1, 0), (0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688))
         >>> Hosh.fromid(groups[40].firstp4).rev.cells, Hosh.fromid(groups[40].lastp4).rev.cells
-        ([0, 0, 0, 1, 0, 0], [0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        ((0, 0, 0, 1, 0, 0), (0, 0, 1099511627688, 1099511627688, 1099511627688, 1099511627688))
 
         >>> # Limits of group G.
         >>> Hosh.fromid(groups[40].firstp6).id, Hosh.fromid(groups[40].lastp6).id
@@ -240,9 +241,9 @@ class Hosh:
         >>> Hosh.fromid(groups[40].firstp6).rev.id, Hosh.fromid(groups[40].lastp6).rev.id
         ('00_1000000000000000000000000000000000000', 'g-8KOjCQREq2Vz8VTc30gLMd..vvX6000ov.....')
         >>> Hosh.fromid(groups[40].firstp6).cells, Hosh.fromid(groups[40].lastp6).cells
-        ([0, 1, 0, 0, 0, 0], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        ((0, 1, 0, 0, 0, 0), (1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688))
         >>> Hosh.fromid(groups[40].firstp6).rev.cells, Hosh.fromid(groups[40].lastp6).rev.cells
-        ([0, 0, 0, 0, 1, 0], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        ((0, 0, 0, 0, 1, 0), (1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688))
 
         >>> # Near limits of group G.
         >>> Hosh.fromn(groups[40].p4+1).id, Hosh.fromn(groups[40].p6 - 2).id
@@ -250,16 +251,16 @@ class Hosh:
         >>> Hosh.fromn(groups[40].p4+1).rev.id, Hosh.fromn(groups[40].p6 - 2).rev.id
         ('ihdwjXvMdIj40gZQq-..5Ai0000j-....3000000', '7XoPrombpt9-UXQnse30Cgud..fcZ6000kv.....')
         >>> Hosh.fromn(groups[40].p4+1).cells, Hosh.fromn(groups[40].p6 - 2).cells
-        ([0, 1, 0, 0, 0, 1], [1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627687])
+        ((0, 1, 0, 0, 0, 1), (1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627687))
         >>> Hosh.fromn(groups[40].p4+1).rev.cells, Hosh.fromn(groups[40].p6 - 2).rev.cells
-        ([1, 0, 0, 0, 1, 0], [1099511627687, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688])
+        ((1, 0, 0, 0, 1, 0), (1099511627687, 1099511627688, 1099511627688, 1099511627688, 1099511627688, 1099511627688))
         """
         if self._rev is None:
             id = self.id
             if self.etype == "ordered":
-                self._rev = Hosh(list(reversed(self.cells)))
+                self._rev = Hosh(tuple(reversed(self.cells)))
             elif self.etype == "hybrid":
-                self._rev = Hosh(self.cells[:2] + list(reversed(self.cells[2:])))
+                self._rev = Hosh(self.cells[:2] + tuple(reversed(self.cells[2:])))
             elif self.etype == "unordered":
                 self._rev = Hosh.fromid(id[:4] + "".join(reversed(id[4:11])) + "_____________________________")
             else:  # pragma: no cover
@@ -341,7 +342,7 @@ class Hosh:
         >>> a.n
         1094566309952642687224764830259410933250743749332933330234
         >>> a.cells
-        [748932665, 516513868, 468764361, 3316970622, 2727293743, 316029245]
+        (748932665, 516513868, 468764361, 3316970622, 2727293743, 316029245)
         >>> a.etype
         'ordered'
         >>> bid = a.id[:2] + "_" + a.id[3:]
@@ -353,7 +354,7 @@ class Hosh:
         >>> b.n
         59377482839139050825606534576063885287
         >>> b.cells
-        [0, 0, 749449200, 1774140626, 3139018916, 292801225]
+        (0, 0, 749449200, 1774140626, 3139018916, 292801225)
         >>> b.etype
         'hybrid'
         >>> Hosh.fromid("0000000000000000000000000000000000000000000000000000000000000000") == 0
@@ -422,6 +423,8 @@ class Hosh:
         -------
         A new Hosh object
         """
+        if version != "UT40_4":
+            raise NotImplementedError(f"Unsupported version: {version}")
         import torch
         arr = tensor.reshape(-1).to(torch.int64)
         if device is not None:
@@ -645,7 +648,7 @@ class Hosh:
 
         Switch positions of cells a2 and a5. This operation is its own inverse.
 
-        Cells are represented as a list in the format: [a5, a4, a3, a2, a1, a0]
+        Cells are represented as a tuple in the format: (a5, a4, a3, a2, a1, a0)
         Cells are represented as a matrix in the format:
         1 a4 a1 a0
         0  1 a2 a3
@@ -653,10 +656,8 @@ class Hosh:
         0  0  0  1
 
         """
-        cells = self.cells.copy()
-        cells[3] = cells[0]
-        cells[0] = self.cells[3]
-        return Hosh(cells, version=self.version)
+        cells = self.cells
+        return Hosh((cells[3], cells[1], cells[2], cells[0], cells[4], cells[5]), version=self.version)
 
     def __invert__(self):
         return Hosh(cellsinv(self.cells, self.p), version=self.version)
@@ -688,14 +689,14 @@ class Hosh:
         """Matrix addition modulo p, keeping unidiagonal"""
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented
-        cells = list(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
+        cells = tuple(map(lambda x, y: (x + y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
 
     def __sub__(self, other):  # TODO: check if a - b  here is different from a + (-b) ?
         """Matrix subtraction modulo p, keeping unidiagonal"""
         if (other := self.convert(other)) is NotImplemented:  # pragma: no cover
             return NotImplemented
-        cells = list(map(lambda x, y: (x - y) % self.p, self.cells, other.cells))
+        cells = tuple(map(lambda x, y: (x - y) % self.p, self.cells, other.cells))
         return Hosh(cells, version=self.version)
         # REMINDER: the chosen implementation differs from the alternative bellow!
         # return Hosh.fromn((self.n + self.convert(other).n) % self.order, self.version)
@@ -760,7 +761,7 @@ class Hosh:
             other = Hosh(other, etype=self.etype_inducer, version=self.version)
         elif isinstance(other, int):
             other = Hosh.fromn(other, version=self.version)
-        elif isinstance(other, list):
+        elif isinstance(other, (tuple | list)):
             other = Hosh(other, version=self.version)
         elif not isinstance(other, Hosh):
             return NotImplemented
@@ -852,7 +853,7 @@ class Hosh:
             lst[-1] += rem
             return [l % p for l in lst]
 
-        return (Hosh(list(x), version=self.version) for x in zip(*(fac(c) for c in self.cells)))
+        return (Hosh(tuple(x), version=self.version) for x in zip(*(fac(c) for c in self.cells)))
 
     def bad_additive_component(self, i, n):
         """
@@ -898,7 +899,7 @@ class Hosh:
             parc, rem = divmod(x + p, den)
             return (i * parc + toggle * rem) % p
 
-        return Hosh(list(fac(c) for c in self.cells), version=self.version)
+        return Hosh(tuple(fac(c) for c in self.cells), version=self.version)
 
     def components(self, start, stop, n, additive=False):
         r"""
